@@ -1,0 +1,1182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Mia's Motion Lab · Chapter 13 · Science Grade 4</title>
+<link rel="icon" href="data:,">
+<style>
+  :root{
+    /* Chapter 14 skin — Part 3 CORAL, identical to c14.html */
+    --col:#E85D3D; --deep:#B23A1F; --tint:#FDEEE8;
+    --cream:#FFF7E0; --amber:#E8A020; --magenta:#B23A1F;
+    --sky:var(--tint); --ink:#1F2430; --teal:var(--col); --teal-dark:var(--deep);
+    --gold:var(--amber); --green:#3E9B4F; --green-dark:#2F7D3E;
+    --card-shadow:0 10px 24px rgba(178,58,31,.16);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  [hidden]{display:none !important;}
+  html,body{height:100%;}
+  body{
+    font-family:"Comic Neue","Baloo 2","Comic Sans MS","Chalkboard SE","Segoe UI Rounded",ui-rounded,system-ui,sans-serif;
+    background:linear-gradient(180deg,#FDEEE8 0%,#FBE2DC 100%);
+    color:var(--ink); touch-action:manipulation; overflow-x:hidden;
+    display:flex; flex-direction:column; align-items:center; min-height:100dvh;
+  }
+  body::before, body::after{
+    content:""; position:fixed; left:0; right:0; height:14px; z-index:5; pointer-events:none;
+    background-image:
+      radial-gradient(circle at 10px 7px, #E85D3D 4.5px, transparent 5px),
+      radial-gradient(circle at 34px 7px, #E8A020 4.5px, transparent 5px),
+      radial-gradient(circle at 58px 7px, #B23A1F 4.5px, transparent 5px);
+    background-size:72px 14px; background-repeat:repeat-x;
+  }
+  body::before{top:0;} body::after{bottom:0;}
+  .bg-hills,.bg-grass{position:fixed; left:-6%; width:112%; z-index:-2; pointer-events:none;}
+  .bg-hills{bottom:5vh; height:30vh; opacity:.5; animation:drift1 26s ease-in-out infinite alternate;}
+  .bg-grass{bottom:-4px; height:13vh; z-index:-1; opacity:.75; animation:drift2 19s ease-in-out infinite alternate;}
+  @keyframes drift1{from{transform:translateX(-10px)}to{transform:translateX(12px)}}
+  @keyframes drift2{from{transform:translateX(12px)}to{transform:translateX(-12px)}}
+  .petal{
+    position:fixed; top:-4vh; z-index:-1; pointer-events:none; border-radius:62% 38% 62% 38%;
+    opacity:.8; animation:petalfall linear infinite;
+  }
+  @keyframes petalfall{
+    0%{transform:translate(0,-4vh) rotate(0deg);}
+    100%{transform:translate(7vw,108vh) rotate(320deg);}
+  }
+  /* ---------- top bar ---------- */
+  .topbar{
+    width:100%; max-width:560px; display:flex; align-items:center; justify-content:space-between;
+    padding:16px 14px 4px; gap:8px;
+  }
+  .home-btn{
+    text-decoration:none; background:#fff; color:var(--deep); font-weight:800; font-size:15px;
+    border:3px solid #F2A694; border-radius:999px; padding:7px 14px; box-shadow:0 3px 0 #F2A694;
+  }
+  .home-btn:active{transform:translateY(2px); box-shadow:none;}
+  .unit-chip{
+    background:#E6F4F5; color:var(--deep); font-weight:800; font-size:14px;
+    border-radius:999px; padding:8px 12px; text-align:center; line-height:1.15;
+  }
+  .scorebox{
+    display:flex; align-items:center; gap:5px; background:#fff; border:3px solid #FFE1A1;
+    border-radius:999px; padding:6px 13px 6px 9px; font-size:17px; font-weight:800; color:#B97A0B;
+    box-shadow:0 3px 0 #FFE1A1; min-width:104px; justify-content:center;
+  }
+  .scorebox svg{width:24px;height:24px;flex:none;}
+  .scorebox.bump{animation:bump .45s ease;}
+  @keyframes bump{0%{transform:scale(1)}40%{transform:scale(1.18) rotate(-3deg)}100%{transform:scale(1)}}
+  .toggles{
+    width:100%; max-width:560px; display:flex; gap:8px; justify-content:flex-end; padding:6px 14px 0;
+  }
+  .tgl{
+    border:3px solid #F9D2C9; background:#fff; border-radius:999px; padding:5px 13px; cursor:pointer;
+    font-family:inherit; font-weight:800; font-size:13.5px; color:var(--ink); box-shadow:0 3px 0 #F9D2C9;
+    transition:transform .12s, box-shadow .12s, opacity .2s;
+  }
+  .tgl:active{transform:translateY(2px); box-shadow:none;}
+  .tgl.off{opacity:.5; filter:grayscale(.8);}
+  .partline{
+    margin-top:8px; background:#fff; border:3px solid #F2A694; color:var(--deep);
+    font-weight:800; font-size:14.5px; border-radius:999px; padding:5px 16px; box-shadow:0 3px 0 #F2A694;
+  }
+  /* ---------- Mia dock: sprite + speech bubble ---------- */
+  .dock{
+    position:relative; width:100%; max-width:560px; display:flex; align-items:flex-end; gap:4px;
+    padding:4px 14px 0; cursor:pointer;
+  }
+  .mascot{
+    width:80px; height:80px; flex:none; object-fit:cover; border-radius:50%;
+    border:4px solid var(--gold); background:#fff;
+    transform-origin:50% 100%; pointer-events:none;
+    animation:breathe 3.2s ease-in-out infinite;
+    filter:drop-shadow(0 6px 6px rgba(178,58,31,.22));
+  }
+  @keyframes breathe{0%,100%{transform:translateY(0) scale(1,1)}50%{transform:translateY(-3px) scale(1.015,.99)}}
+  .mascot.cheer{animation:cheer .62s ease 2;}
+  @keyframes cheer{
+    0%{transform:translateY(0)}35%{transform:translateY(-18px) rotate(-3deg) scale(1.05)}
+    70%{transform:translateY(0) rotate(2deg)}100%{transform:translateY(0)}
+  }
+  .mascot.encourage{animation:encourage .7s ease;}
+  @keyframes encourage{
+    0%{transform:rotate(0)}30%{transform:rotate(-5deg) translateY(-2px)}
+    65%{transform:rotate(4deg)}100%{transform:rotate(0)}
+  }
+  .mascot-wrap{position:relative; width:80px; height:80px; flex:none;}
+  .dock .mascot{width:100%; height:100%;}
+  @media (max-height:660px){ .dock .mascot-wrap{width:64px; height:64px;} }
+  .mouth{
+    position:absolute; left:49%; top:66%; width:10%; height:8%;
+    background:#4A2C20; border-radius:50%; opacity:0; pointer-events:none;
+    transform:scaleY(.18); transform-origin:center; transition:opacity .15s;
+  }
+  .mouth::after{
+    content:""; position:absolute; left:20%; right:20%; bottom:6%; height:38%;
+    background:#E88CA0; border-radius:50%;
+  }
+  .mascot-wrap.speaking .mouth{opacity:1; animation:mouthTalk .32s ease-in-out infinite alternate;}
+  @keyframes mouthTalk{from{transform:scaleY(.18)} to{transform:scaleY(1)}}
+  .mascot-wrap[data-emotion="praise"] .mouth{width:13%; left:47.5%;}
+  .mascot-wrap[data-emotion="retry"] .mouth{animation-duration:.52s;}
+  .mascot-wrap[data-emotion="story"] .mouth{animation-duration:.42s;}
+  .mascot-wrap.speaking{filter:drop-shadow(0 0 9px rgba(245,166,35,.55));}
+  .mascot-wrap.pulse .mascot{animation:miapulse .26s ease;}
+  @keyframes miapulse{40%{transform:scale(1.07) translateY(-2px)}}
+  .mascot-wrap.pointing .mascot{animation:pointlean 1s ease-in-out infinite;}
+  @keyframes pointlean{0%,100%{transform:translateX(0) rotate(0)}50%{transform:translateX(4px) rotate(2.5deg)}}
+  .thumb-pop{
+    position:absolute; right:-18px; top:-16px; font-size:34px; z-index:3;
+    opacity:0; pointer-events:none;
+  }
+  .thumb-pop.pop{animation:thumbpop .9s ease;}
+  @keyframes thumbpop{
+    0%{opacity:0; transform:scale(.3) rotate(-14deg)}
+    30%{opacity:1; transform:scale(1.25) rotate(4deg)}
+    70%{opacity:1} 100%{opacity:0; transform:scale(1) translateY(-8px)}
+  }
+  .bubble{
+    flex:1; position:relative; margin:0 0 12px 6px; background:#E6F4F5; border:3px solid #F2A694;
+    color:var(--deep); font-size:clamp(20px,5.8vw,26px); font-weight:800; text-align:center;
+    border-radius:22px; padding:10px 16px; line-height:1.25; box-shadow:0 4px 10px rgba(178,58,31,.12);
+  }
+  .bubble::before{
+    content:""; position:absolute; left:-13px; bottom:14px; width:20px; height:20px;
+    background:#E6F4F5; border-left:3px solid #F2A694; border-bottom:3px solid #F2A694;
+    transform:rotate(45deg); border-bottom-left-radius:6px;
+  }
+  .praise{
+    min-height:32px; text-align:center; font-size:clamp(19px,5.4vw,25px); font-weight:800; color:#095A62;
+    padding:2px 10px 0; opacity:0; transform:scale(.8); transition:all .25s;
+  }
+  .praise.show{opacity:1; transform:scale(1);}
+  /* ---------- title screen ---------- */
+  #titleView{width:100%; display:flex; flex-direction:column; align-items:center;}
+  .story-wrap{
+    width:100%; max-width:560px; display:flex; gap:10px; align-items:flex-start;
+    padding:8px 12px 0;
+  }
+  .story-mia{
+    width:92px; height:92px; flex:none; object-fit:cover; border-radius:50%;
+    border:4px solid var(--gold); background:#FFF7E0;
+    box-shadow:var(--card-shadow); display:block; transform-origin:50% 100%;
+  }
+  .story-card{
+    flex:1; min-width:0; background:#E6F4F5; border:4px solid var(--teal);
+    border-radius:26px; padding:16px 16px 14px; box-shadow:var(--card-shadow); text-align:center;
+  }
+  .own-badge{
+    display:inline-block; background:var(--amber); color:#5C3A00; font-weight:800;
+    font-size:13.5px; letter-spacing:1.2px; border-radius:999px; padding:7px 18px;
+    box-shadow:0 3px 0 #B97A0B; margin-bottom:10px;
+  }
+  .story-title{
+    font-size:clamp(25px,6.8vw,33px); font-weight:800; color:var(--deep);
+    text-align:center; line-height:1.15; margin-bottom:8px;
+  }
+  .story-sub{
+    font-size:clamp(19px,5.4vw,23px); font-weight:800; color:#B97A0B; text-align:center; margin-bottom:8px;
+  }
+  .intro-text{
+    font-size:clamp(17.5px,5vw,21px); font-weight:700; text-align:center;
+    color:#1F2430; line-height:1.35;
+  }
+  .play-btn{
+    margin:14px auto 6px; background:var(--teal); color:#fff; border:none; cursor:pointer;
+    font-family:inherit; font-size:clamp(22px,6vw,27px); font-weight:800; border-radius:999px;
+    padding:16px 38px; box-shadow:0 7px 0 var(--teal-dark);
+    transition:transform .12s, box-shadow .12s, opacity .2s;
+    animation:playglow 1.6s ease-in-out infinite;
+  }
+  @keyframes playglow{
+    0%,100%{box-shadow:0 7px 0 var(--teal-dark), 0 0 0 0 rgba(246,184,28,0);}
+    50%{box-shadow:0 7px 0 var(--teal-dark), 0 0 0 13px rgba(246,184,28,.38);}
+  }
+  .play-btn:active{transform:translateY(5px); box-shadow:0 2px 0 var(--teal-dark);}
+  .play-btn.listening{animation:none; opacity:.75;}
+  .play-btn.waiting{animation:none; opacity:.55; filter:saturate(.55);}
+  .play-btn.ready{animation:playglow 1.1s ease-in-out infinite; opacity:1;}
+  .play-btn:disabled{cursor:default;}
+  /* ---------- station map chips ---------- */
+  .station-map{
+    width:100%; max-width:560px; display:flex; gap:8px; justify-content:center; flex-wrap:wrap;
+    padding:10px 12px 0;
+  }
+  .st-chip{
+    background:#fff; border:3px solid #F9D2C9; color:var(--deep); font-weight:800; font-size:14.5px;
+    border-radius:999px; padding:6px 13px; box-shadow:0 3px 0 #F9D2C9;
+  }
+  .st-chip.now{border-color:var(--teal); background:var(--tint);}
+  .st-chip.done{border-color:var(--green); background:#EAF7EE; color:var(--green-dark); box-shadow:0 3px 0 var(--green-dark);}
+  /* ---------- lab station cards ---------- */
+  .lab-view{width:100%; display:flex; flex-direction:column; align-items:center;}
+  .lab-card{
+    position:relative; width:calc(100% - 24px); max-width:536px; margin:8px auto 4px; background:#fff;
+    border:4px solid var(--teal); border-radius:24px; padding:16px 12px 18px;
+    box-shadow:var(--card-shadow); text-align:center;
+  }
+  .station-head{
+    font-size:clamp(21px,6vw,26px); font-weight:800; color:var(--deep); line-height:1.2; margin-bottom:4px;
+  }
+  .scene{width:100%; max-width:430px; margin:2px auto 0;}
+  .scene svg{width:100%; height:auto; display:block;}
+  .scene-cap{font-size:16px; font-weight:800; color:#A07B4F; margin-top:2px; line-height:1.3;}
+  .mix-label{
+    display:inline-block; background:#FFF3D6; border:3px solid #E8A020; color:#8A5A00;
+    font-weight:800; font-size:15px; border-radius:999px; padding:5px 14px; margin-top:8px; line-height:1.25;
+  }
+  /* ---------- tool options (same tiles as the chapter games) ---------- */
+  .opts{
+    width:100%; max-width:536px; display:grid; grid-template-columns:repeat(3,1fr); gap:10px;
+    padding:12px 2px 4px;
+  }
+  .opt{
+    border:4px solid #fff; border-radius:24px; padding:10px 6px 10px; cursor:pointer;
+    display:flex; flex-direction:column; align-items:center; gap:6px;
+    transition:transform .13s, box-shadow .13s, opacity .25s, background .25s;
+    font-family:inherit; min-height:118px; justify-content:center;
+  }
+  .opt svg{width:100%; height:76px; border-radius:15px; display:block; pointer-events:none;}
+  .opt span{font-size:19px; font-weight:800; color:var(--ink); line-height:1.05; text-align:center;}
+  .opt[data-tint="a"]{background:#DDEEF0; box-shadow:0 7px 0 #7FB5BA, 0 11px 14px rgba(178,58,31,.16);}
+  .opt[data-tint="b"]{background:#FFF0C4; box-shadow:0 7px 0 #EFC078, 0 11px 14px rgba(160,110,40,.16);}
+  .opt[data-tint="c"]{background:#E2F3D8; box-shadow:0 7px 0 #A5D69B, 0 11px 14px rgba(90,140,80,.16);}
+  .opt:active{transform:translateY(5px);}
+  .opt.right{
+    background:#BDEBC4 !important; border-color:var(--green);
+    animation:rightpop .5s ease; box-shadow:0 7px 0 var(--green-dark), 0 0 22px rgba(62,155,79,.55) !important;
+  }
+  @keyframes rightpop{0%{transform:scale(1)}40%{transform:scale(1.1) rotate(-2deg)}100%{transform:scale(1)}}
+  .opt.wrong{animation:wobble .45s ease;}
+  @keyframes wobble{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}45%{transform:translateX(6px)}70%{transform:translateX(-4px)}90%{transform:translateX(2px)}}
+  .opts.locked{pointer-events:none; opacity:.55; filter:saturate(.6);}
+  .opt:disabled{cursor:default;}
+  /* ---------- action buttons / hold ---------- */
+  .act-row{display:flex; flex-direction:column; align-items:center; margin-top:6px;}
+  .act-btn{
+    background:var(--teal); color:#fff; border:none; cursor:pointer; font-family:inherit;
+    font-size:clamp(21px,5.8vw,25px); font-weight:800; border-radius:999px; padding:15px 36px;
+    box-shadow:0 7px 0 var(--teal-dark); transition:transform .12s, box-shadow .12s, opacity .2s;
+  }
+  .act-btn:active{transform:translateY(5px); box-shadow:0 2px 0 var(--teal-dark);}
+  .act-btn.waiting{opacity:.55; filter:saturate(.55);}
+  .act-btn:disabled{cursor:default; opacity:.6;}
+  .act-btn.holding{transform:translateY(4px) scale(.98); box-shadow:0 2px 0 var(--teal-dark); background:var(--deep);}
+  .hold-track{
+    width:82%; max-width:330px; height:17px; background:var(--tint); border:3px solid #F2A694;
+    border-radius:999px; margin:12px auto 0; overflow:hidden;
+  }
+  .hold-fill{height:100%; width:0%; background:linear-gradient(90deg,#FFC93C,#E85D3D); border-radius:999px;}
+  .hold-hint{font-size:14.5px; font-weight:800; color:#A07B4F; margin-top:6px;}
+  /* ---------- result cards ---------- */
+  .results{display:flex; gap:10px; margin-top:14px;}
+  .result-card{
+    flex:1; border-radius:18px; padding:12px 8px 13px; font-weight:800; font-size:16.5px;
+    line-height:1.3; border:3px solid; animation:showup .5s ease both;
+  }
+  .result-card .rc-pic{height:52px; display:flex; align-items:center; justify-content:center; margin-bottom:6px;}
+  .result-card .rc-pic svg{height:52px; width:auto;}
+  .result-card.water{background:#EAF4FF; border-color:#7FB5E8; color:#14568F;}
+  .result-card.sand{background:#FFF3D6; border-color:#E8A020; color:#8A5A00;}
+  .result-card.salt{background:#FFFDF4; border-color:#C9A86A; color:#7A5A12;}
+  .result-card.rice{background:#FDF6E3; border-color:#D8B25C; color:#7A5A12;}
+  .result-card.stone{background:#EFEFEF; border-color:#9AA0A6; color:#4A4F54;}
+  @keyframes showup{from{opacity:0; transform:translateY(14px) scale(.94)}to{opacity:1; transform:none}}
+  .next-row{display:flex; justify-content:center; margin-top:14px;}
+  /* ---------- star burst ---------- */
+  .burst-star{position:absolute; pointer-events:none; z-index:6; animation:burst .85s ease-out forwards;}
+  @keyframes burst{
+    0%{transform:translate(0,0) scale(.4) rotate(0deg); opacity:1;}
+    100%{transform:translate(var(--dx),var(--dy)) scale(1.15) rotate(160deg); opacity:0;}
+  }
+  /* ---------- finish overlay ---------- */
+  .overlay{
+    position:fixed; inset:0; z-index:20; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    background:linear-gradient(180deg,#E6F4F5 0%,#D8ECEE 100%); padding:24px 18px; text-align:center; overflow-y:auto;
+  }
+  .overlay[hidden]{display:none;}
+  .overlay h1{font-size:clamp(27px,7.4vw,38px); font-weight:800; line-height:1.15; color:var(--deep);}
+  .overlay p{font-size:16px; font-weight:700; color:#7A97A5; margin-top:10px; max-width:420px; line-height:1.45;}
+  .overlay .game-name{
+    background:#fff; border:3px solid #FFE1A1; color:#B97A0B; border-radius:999px;
+    font-weight:800; font-size:17px; padding:7px 18px; margin-bottom:14px; box-shadow:0 3px 0 #FFE1A1;
+  }
+  .big-btn{
+    margin-top:20px; background:var(--teal); color:#fff; border:none; cursor:pointer; font-family:inherit;
+    font-size:26px; font-weight:800; border-radius:999px; padding:16px 44px;
+    box-shadow:0 7px 0 var(--teal-dark); transition:transform .12s, box-shadow .12s;
+  }
+  .big-btn:active{transform:translateY(5px); box-shadow:0 2px 0 var(--teal-dark);}
+  .mascot-dance{
+    width:118px; height:118px; object-fit:cover; border-radius:50%; border:5px solid var(--gold);
+    margin-top:8px; transform-origin:50% 100%; animation:dance .8s ease-in-out infinite;
+    filter:drop-shadow(0 7px 7px rgba(178,58,31,.25));
+  }
+  @keyframes dance{
+    0%,100%{transform:rotate(-4deg) translateY(0)}
+    50%{transform:rotate(4deg) translateY(-11px) scale(1.03)}
+  }
+  .moral-pill{
+    background:var(--teal); color:#fff; border-radius:999px; padding:10px 22px;
+    font-weight:800; font-size:17.5px; margin-top:12px; box-shadow:0 4px 0 var(--teal-dark); line-height:1.25;
+    display:inline-block;
+  }
+  .big-score{
+    font-size:clamp(30px,8.4vw,44px); font-weight:800; color:#B97A0B; margin-top:10px; line-height:1.1;
+  }
+  .fall-star{position:fixed; top:-46px; z-index:30; pointer-events:none; animation:fall linear forwards;}
+  @keyframes fall{to{transform:translateY(108dvh) rotate(320deg);}}
+  .confetti{position:fixed; top:-22px; z-index:30; pointer-events:none; border-radius:2px; animation:confall linear forwards;}
+  @keyframes confall{to{transform:translateY(108dvh) rotate(560deg);}}
+  .credit{font-size:12.5px; font-weight:700; color:#6E97A0; padding:0 10px 16px; text-align:center; margin-top:auto;}
+  @media (max-width:400px){
+    .story-mia{width:76px; height:76px;}
+    .opt span{font-size:16.5px;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:.01s !important; transition-duration:.01s !important;}
+  }
+
+  /* ---------- G4 lab extras: big answer buttons, scenes ---------- */
+  .ans-row{display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:12px; width:100%;}
+  .ans-row.locked{pointer-events:none; opacity:.55; filter:saturate(.6);}
+  .ans-btn{
+    flex:1 1 100px; min-height:54px; font-family:inherit; font-size:18px; font-weight:800; color:var(--ink);
+    background:#FFF7E0; border:3px solid var(--amber); border-radius:18px; padding:12px 10px; cursor:pointer;
+    box-shadow:0 4px 0 #B97A0B; transition:transform .12s, box-shadow .12s, background .25s;
+  }
+  .ans-btn:active{transform:translateY(3px); box-shadow:none;}
+  .ans-btn.right{background:#BDEBC4 !important; border-color:var(--green); box-shadow:0 4px 0 var(--green-dark);}
+  .ans-btn.wrong{animation:wobble .45s ease;}
+  .big-card-show{font-size:66px; line-height:1.1; text-align:center; padding:8px 0 2px;}
+  .big-card-name{font-size:clamp(23px,6vw,28px); font-weight:800; color:var(--deep); text-align:center;}
+  .findable{cursor:pointer;}
+  .beam-fade{transition:opacity .5s;}
+  .lit-fade{transition:opacity .9s;}
+  .star-burst{transform-box:fill-box; transform-origin:center; animation:rightpop .5s ease 3;}
+  .car-drive{animation:drive 3s linear infinite;}
+  @keyframes drive{from{transform:translateX(-56px)} to{transform:translateX(316px)}}
+  .swing-rock{transform-box:fill-box; transform-origin:50% 0%; animation:rock 1.5s ease-in-out infinite alternate;}
+  @keyframes rock{from{transform:rotate(-17deg)} to{transform:rotate(17deg)}}
+  .merry-spin{transform-box:fill-box; transform-origin:center; animation:spin360 4.5s linear infinite;}
+  @keyframes spin360{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+  <svg class="bg-hills" viewBox="0 0 1440 320" preserveAspectRatio="none" aria-hidden="true"><path d="M0,190 C240,110 420,240 720,190 C1020,140 1200,230 1440,170 L1440,320 L0,320 Z" fill="#CFE9EC"/><path d="M0,250 C260,190 520,290 820,250 C1100,215 1280,280 1440,240 L1440,320 L0,320 Z" fill="#AFD8DC" opacity=".7"/></svg>
+  <svg class="bg-grass" viewBox="0 0 1440 120" preserveAspectRatio="none" aria-hidden="true"><path d="M0,70 C200,40 380,95 620,70 C860,45 1100,90 1440,60 L1440,120 L0,120 Z" fill="#F2A694"/></svg>
+  <div id="petals" aria-hidden="true"></div>
+
+  <div class="topbar">
+    <a class="home-btn" href="index.html">⌂ Chapters</a>
+    <div class="unit-chip">Chapter 13 · How Things Move</div>
+    <div class="scorebox" id="scoreBox" aria-label="Stars you earned">
+      <svg viewBox="0 0 100 100" aria-hidden="true"><path d="M50 6 L63 37 L96 39 L70 60 L79 93 L50 74 L21 93 L30 60 L4 39 L37 37 Z" fill="#FFC93C" stroke="#E8A20C" stroke-width="5" stroke-linejoin="round"/></svg>
+      <span>Stars: <span id="scoreCount">0</span>/3</span>
+    </div>
+  </div>
+
+  <div class="toggles">
+    <button class="tgl" id="musicBtn" aria-pressed="true">🎵 Music</button>
+    <button class="tgl" id="voiceBtn" aria-pressed="true">🗣️ Voice</button>
+  </div>
+
+  <div class="partline" id="partLine">Part 3 · Forces and Matter</div>
+
+  <div class="station-map" id="stationMap">
+    <span class="st-chip" id="chip1">☆ 1 · Which Motion?</span>
+    <span class="st-chip" id="chip2">☆ 2 · Ramp Racers</span>
+    <span class="st-chip" id="chip3">☆ 3 · Push and Measure</span>
+  </div>
+
+  <div class="dock" id="dock" role="button" aria-label="Mia. Tap to hear her again.">
+    <div class="mascot-wrap" id="mascotWrap">
+      <img class="mascot" id="mascot" src="img/mia-face.jpg" alt="Mia, your science friend, smiling at you">
+      <div class="mouth" id="mouth" aria-hidden="true"></div>
+      <div class="thumb-pop" id="thumbPop" aria-hidden="true">👍</div>
+    </div>
+    <div class="bubble" id="speech">Hello! I am Mia!</div>
+  </div>
+
+  <div class="praise" id="praise" aria-live="polite"></div>
+
+  <div id="titleView">
+    <div class="story-wrap">
+      <img class="story-mia" id="storyMia" src="img/mia-stage.jpg" alt="Mia waving hello" draggable="false">
+      <div class="story-card">
+        <div class="own-badge">🧪 OUR OWN VIRTUAL LAB</div>
+        <div class="story-title">Mia's Motion Lab</div>
+        <div class="story-sub">⭐ How Things Move! ⭐</div>
+        <p class="intro-text">Watch things move, race balls down ramps, and measure pushes with Mia!</p>
+      </div>
+    </div>
+    <button class="play-btn" id="startBtn">▶ Start the Lab</button>
+  </div>
+
+
+  <!-- STATION 1: WHICH MOTION? -->
+  <div id="station1View" class="lab-view" hidden>
+    <div class="lab-card" id="card1">
+      <div class="station-head">Station 1 · Which Motion?</div>
+      <div class="scene">
+        <svg viewBox="0 0 360 230" role="img" aria-label="Watch the moving thing, then choose its kind of motion.">
+          <rect x="6" y="8" width="348" height="214" rx="14" fill="#FFF7E0"/>
+          <g id="sceneCar">
+            <rect x="10" y="176" width="340" height="10" rx="5" fill="#9AA0A6"/>
+            <line x1="14" y1="181" x2="346" y2="181" stroke="#FFFFFF" stroke-width="2.5" stroke-dasharray="14 12"/>
+            <g class="car-drive">
+              <rect x="6" y="128" width="76" height="30" rx="9" fill="#D64545"/>
+              <path d="M20,128 L32,108 L62,108 L72,128 Z" fill="#4A90C2"/>
+              <rect x="38" y="113" width="14" height="12" fill="#BFE0E8"/>
+              <rect x="56" y="113" width="12" height="12" fill="#BFE0E8"/>
+              <circle cx="26" cy="160" r="10" fill="#333" stroke="#fff" stroke-width="2.5"/>
+              <circle cx="64" cy="160" r="10" fill="#333" stroke="#fff" stroke-width="2.5"/>
+            </g>
+            <text x="180" y="52" font-size="17" font-weight="800" fill="#B23A1F" text-anchor="middle">Watch the car go!</text>
+          </g>
+          <g id="sceneSwing" style="display:none">
+            <rect x="60" y="34" width="240" height="10" rx="5" fill="#8A5A00"/>
+            <rect x="66" y="34" width="10" height="168" fill="#8A5A00"/>
+            <rect x="284" y="34" width="10" height="168" fill="#8A5A00"/>
+            <g class="swing-rock">
+              <line x1="168" y1="42" x2="168" y2="130" stroke="#5A6270" stroke-width="4"/>
+              <line x1="192" y1="42" x2="192" y2="130" stroke="#5A6270" stroke-width="4"/>
+              <rect x="148" y="130" width="64" height="12" rx="5" fill="#D2691E"/>
+              <circle cx="180" cy="112" r="13" fill="#FFC93C" stroke="#E8A20C" stroke-width="3"/>
+            </g>
+            <text x="180" y="222" font-size="0" fill="none"></text>
+          </g>
+          <g id="sceneMerry" style="display:none">
+            <rect x="172" y="96" width="16" height="104" fill="#8A5A00"/>
+            <polygon points="180,26 236,84 124,84" fill="#D64545"/>
+            <circle cx="180" cy="88" r="12" fill="#E8A020"/>
+            <g class="merry-spin">
+              <circle cx="180" cy="140" r="56" fill="#FDEEE8" stroke="#E85D3D" stroke-width="4"/>
+              <circle cx="180" cy="98" r="11" fill="#4A90C2"/>
+              <circle cx="222" cy="140" r="11" fill="#3E9B4F"/>
+              <circle cx="180" cy="182" r="11" fill="#B04FA0"/>
+              <circle cx="138" cy="140" r="11" fill="#E8A020"/>
+              <circle cx="180" cy="140" r="9" fill="#5A6270"/>
+            </g>
+            <ellipse cx="180" cy="204" rx="86" ry="8" fill="#E8DCC0"/>
+          </g>
+        </svg>
+      </div>
+      <div class="scene-cap" id="s1Cap">Watch carefully… which motion is it?</div>
+      <div class="ans-row locked" id="s1Btns">
+        <button class="ans-btn" data-m="straight">Straight ➡️</button>
+        <button class="ans-btn" data-m="circle">Round and round 🔄</button>
+        <button class="ans-btn" data-m="backforth">Back and forth ↔️</button>
+      </div>
+      <div class="next-row" id="s1Next" hidden>
+        <button class="play-btn" id="s1NextBtn" style="margin:0">Next Station ▶</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATION 2: RAMP RACERS -->
+  <div id="station2View" class="lab-view" hidden>
+    <div class="lab-card" id="card2">
+      <div class="station-head">Station 2 · Ramp Racers</div>
+      <div class="scene">
+        <svg viewBox="0 0 360 290" role="img" aria-label="Two racing tracks: a steep ramp on the top track and a gentle ramp on the bottom track, each with ground squares 1 to 6.">
+          <rect x="6" y="8" width="348" height="274" rx="14" fill="#FFF7E0"/>
+          <text x="90" y="24" font-size="14" font-weight="800" fill="#A92E2E" text-anchor="middle">STEEP RAMP</text>
+          <rect x="20" y="34" width="36" height="8" rx="3" fill="#8A5A00"/>
+          <polygon points="24,42 56,42 112,92 88,92" fill="#C98F4E" stroke="#8A5A00" stroke-width="3"/>
+          <rect x="14" y="92" width="332" height="8" rx="4" fill="#9AA0A6"/>
+          <g id="s2SquaresA"><rect x="112" y="102" width="32" height="32" rx="4" fill="#FFF7E0" stroke="#C9B98A" stroke-width="2"/>
+            <text x="128" y="127" font-size="14" font-weight="800" fill="#8A5A00" text-anchor="middle">1</text>
+            <rect x="150" y="102" width="32" height="32" rx="4" fill="#FFF7E0" stroke="#C9B98A" stroke-width="2"/>
+            <text x="166" y="127" font-size="14" font-weight="800" fill="#8A5A00" text-anchor="middle">2</text>
+            <rect x="188" y="102" width="32" height="32" rx="4" fill="#FFF7E0" stroke="#C9B98A" stroke-width="2"/>
+            <text x="204" y="127" font-size="14" font-weight="800" fill="#8A5A00" text-anchor="middle">3</text>
+            <rect x="226" y="102" width="32" height="32" rx="4" fill="#FFF7E0" stroke="#C9B98A" stroke-width="2"/>
+            <text x="242" y="127" font-size="14" font-weight="800" fill="#8A5A00" text-anchor="middle">4</text>
+            <rect x="264" y="102" width="32" height="32" rx="4" fill="#FFF7E0" stroke="#C9B98A" stroke-width="2"/>
+            <text x="280" y="127" font-size="14" font-weight="800" fill="#8A5A00" text-anchor="middle">5</text>
+            <rect x="302" y="102" width="32" height="32" rx="4" fill="#FFF7E0" stroke="#C9B98A" stroke-width="2"/>
+            <text x="318" y="127" font-size="14" font-weight="800" fill="#8A5A00" text-anchor="middle">6</text></g>
+          <circle id="s2BallA" cx="40" cy="23" r="11" fill="#D64545" stroke="#A92E2E" stroke-width="2.5"/>
+          <text x="92" y="150" font-size="14" font-weight="800" fill="#2F6491" text-anchor="middle">GENTLE RAMP</text>
+          <rect x="20" y="160" width="28" height="8" rx="3" fill="#8A5A00"/>
+          <polygon points="24,168 50,168 158,218 132,218" fill="#C98F4E" stroke="#8A5A00" stroke-width="3"/>
+          <rect x="14" y="218" width="332" height="8" rx="4" fill="#9AA0A6"/>
+          <g id="s2SquaresB"><rect x="112" y="228" width="32" height="32" rx="4" fill="#FFF7E0" stroke="#C9B98A" stroke-width="2"/>
+            <text x="128" y="253" font-size="14" font-weight="800" fill="#8A5A00" text-anchor="middle">1</text>
+            <rect x="150" y="228" width="32" height="32" rx="4" fill="#FFF7E0" stroke="#C9B98A" stroke-width="2"/>
+            <text x="166" y="253" font-size="14" font-weight="800" fill="#8A5A00" text-anchor="middle">2</text>
+            <rect x="188" y="228" width="32" height="32" rx="4" fill="#FFF7E0" stroke="#C9B98A" stroke-width="2"/>
+            <text x="204" y="253" font-size="14" font-weight="800" fill="#8A5A00" text-anchor="middle">3</text>
+            <rect x="226" y="228" width="32" height="32" rx="4" fill="#FFF7E0" stroke="#C9B98A" stroke-width="2"/>
+            <text x="242" y="253" font-size="14" font-weight="800" fill="#8A5A00" text-anchor="middle">4</text>
+            <rect x="264" y="228" width="32" height="32" rx="4" fill="#FFF7E0" stroke="#C9B98A" stroke-width="2"/>
+            <text x="280" y="253" font-size="14" font-weight="800" fill="#8A5A00" text-anchor="middle">5</text>
+            <rect x="302" y="228" width="32" height="32" rx="4" fill="#FFF7E0" stroke="#C9B98A" stroke-width="2"/>
+            <text x="318" y="253" font-size="14" font-weight="800" fill="#8A5A00" text-anchor="middle">6</text></g>
+          <circle id="s2BallB" cx="36" cy="149" r="11" fill="#4A90C2" stroke="#2F6491" stroke-width="2.5"/>
+          <text x="180" y="276" font-size="13" font-weight="800" fill="#8A5A00" text-anchor="middle">Each track has squares 1 to 6</text>
+        </svg>
+      </div>
+      <div class="scene-cap" id="s2Cap">Two ramps! Which ball will roll farther?</div>
+      <div class="act-row" id="s2Act">
+        <button class="act-btn" id="s2Go">GO! 🏁</button>
+      </div>
+      <div class="ans-row" id="s2Ans" hidden>
+        <button class="ans-btn" data-n="2">2 squares</button>
+        <button class="ans-btn" data-n="5">5 squares</button>
+        <button class="ans-btn" data-n="3">3 squares</button>
+      </div>
+      <div class="next-row" id="s2Next" hidden>
+        <button class="play-btn" id="s2NextBtn" style="margin:0">Next Station ▶</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATION 3: PUSH AND MEASURE -->
+  <div id="station3View" class="lab-view" hidden>
+    <div class="lab-card" id="card3">
+      <div class="station-head">Station 3 · Push and Measure</div>
+      <div class="scene">
+        <svg viewBox="0 0 360 210" role="img" aria-label="A ball on a numbered track from 0 to 8. Push it and measure how far it goes.">
+          <rect x="6" y="8" width="348" height="194" rx="14" fill="#FFF7E0"/>
+          <rect x="14" y="128" width="332" height="10" rx="5" fill="#9AA0A6"/>
+          <g id="s3Squares"><rect x="16" y="146" width="30" height="30" rx="4" fill="#FFF7E0" stroke="#C9B98A" stroke-width="2"/>
+            <text x="31" y="168" font-size="15" font-weight="800" fill="#8A5A00" text-anchor="middle">0</text>
+            <rect x="52" y="146" width="30" height="30" rx="4" fill="#FFF7E0" stroke="#C9B98A" stroke-width="2"/>
+            <text x="67" y="168" font-size="15" font-weight="800" fill="#8A5A00" text-anchor="middle">1</text>
+            <rect x="88" y="146" width="30" height="30" rx="4" fill="#FFF7E0" stroke="#C9B98A" stroke-width="2"/>
+            <text x="103" y="168" font-size="15" font-weight="800" fill="#8A5A00" text-anchor="middle">2</text>
+            <rect x="124" y="146" width="30" height="30" rx="4" fill="#FFF7E0" stroke="#C9B98A" stroke-width="2"/>
+            <text x="139" y="168" font-size="15" font-weight="800" fill="#8A5A00" text-anchor="middle">3</text>
+            <rect x="160" y="146" width="30" height="30" rx="4" fill="#FFF7E0" stroke="#C9B98A" stroke-width="2"/>
+            <text x="175" y="168" font-size="15" font-weight="800" fill="#8A5A00" text-anchor="middle">4</text>
+            <rect x="196" y="146" width="30" height="30" rx="4" fill="#FFF7E0" stroke="#C9B98A" stroke-width="2"/>
+            <text x="211" y="168" font-size="15" font-weight="800" fill="#8A5A00" text-anchor="middle">5</text>
+            <rect x="232" y="146" width="30" height="30" rx="4" fill="#FFF7E0" stroke="#C9B98A" stroke-width="2"/>
+            <text x="247" y="168" font-size="15" font-weight="800" fill="#8A5A00" text-anchor="middle">6</text>
+            <rect x="268" y="146" width="30" height="30" rx="4" fill="#FFF7E0" stroke="#C9B98A" stroke-width="2"/>
+            <text x="283" y="168" font-size="15" font-weight="800" fill="#8A5A00" text-anchor="middle">7</text>
+            <rect x="304" y="146" width="30" height="30" rx="4" fill="#FFF7E0" stroke="#C9B98A" stroke-width="2"/>
+            <text x="319" y="168" font-size="15" font-weight="800" fill="#8A5A00" text-anchor="middle">8</text></g>
+          <circle id="s3Ball" cx="34" cy="114" r="14" fill="#3E9B4F" stroke="#2F7D3E" stroke-width="3"/>
+          <text id="s3Hand" x="34" y="76" font-size="30" text-anchor="middle">👋</text>
+        </svg>
+      </div>
+      <div class="scene-cap" id="s3Cap">Round 1: give the ball a small push!</div>
+      <div class="act-row" id="s3Act">
+        <button class="act-btn" id="s3Push">Small push 👋</button>
+      </div>
+      <div class="ans-row" id="s3Ans1" hidden>
+        <button class="ans-btn" data-n="1">1</button>
+        <button class="ans-btn" data-n="2">2</button>
+        <button class="ans-btn" data-n="4">4</button>
+      </div>
+      <div class="ans-row" id="s3Ans2" hidden>
+        <button class="ans-btn" data-n="4">4</button>
+        <button class="ans-btn" data-n="6">6</button>
+        <button class="ans-btn" data-n="8">8</button>
+      </div>
+      <div class="next-row" id="s3Next" hidden>
+        <button class="play-btn" id="s3NextBtn" style="margin:0">See My Stars ⭐</button>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="credit">✦ Prepared by: Zulfiqar Ali Sajid ✦</div>
+
+  <div class="overlay" id="endOverlay" hidden>
+    <div class="game-name">🧪 Lab Complete!</div>
+    <h1>Well done,<br>little scientist!</h1>
+    <img class="mascot-dance" src="img/mia-stage.jpg" alt="Mia dancing">
+    <div class="big-score" id="finalStars">You earned 3 ⭐ stars!</div>
+    <div class="moral-pill">⭐ Things move in straight lines, circles, and back and forth! ⭐</div>
+    <p>Mia is so proud of you!</p>
+    <button class="big-btn" id="againBtn">↻ Play Again</button>
+    <p><a href="c13.html" style="color:#095A62; font-weight:800;">↩ Back to the Chapter 13 game</a></p>
+    <p><a href="index.html" style="color:#095A62; font-weight:800;">⌂ More chapter games</a></p>
+  </div>
+
+<script>
+
+(function(){
+  "use strict";
+
+  var STAR = '<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M50 6 L63 37 L96 39 L70 60 L79 93 L50 74 L21 93 L30 60 L4 39 L37 37 Z" fill="#FFC93C" stroke="#E8A20C" stroke-width="5" stroke-linejoin="round"/></svg>';
+  var PRAISE = ["Great job! ⭐", "Well done! ⭐", "Super! ⭐", "Yes! That's right! ⭐", "Hooray! ⭐"];
+
+  /* ---------- tiny helpers ---------- */
+  function buzz(){ try{ if(navigator.vibrate){ navigator.vibrate(30); } }catch(e){} }
+
+  /* ---------- audio: WebAudio, created on first tap ---------- */
+  var actx = null, musicGain = null;
+  function audio(){
+    if(!actx){
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if(AC){ try{ actx = new AC(); }catch(e){ actx = null; } }
+      if(actx){
+        try{ musicGain = actx.createGain(); musicGain.gain.value = .9; musicGain.connect(actx.destination); }catch(e){ musicGain = null; }
+      }
+    }
+    if(actx && actx.state === "suspended"){ actx.resume(); }
+    return actx;
+  }
+  function toneAt(freq, t, dur, type, vol, dest){
+    var ac = actx; if(!ac) return;
+    var o = ac.createOscillator(), g = ac.createGain();
+    o.type = type || "sine"; o.frequency.value = freq;
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(vol || 0.16, t + 0.03);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(dest || ac.destination);
+    o.start(t); o.stop(t + dur + 0.05);
+  }
+  function tone(freq, t0, dur, type, vol){
+    var ac = audio(); if(!ac) return;
+    toneAt(freq, ac.currentTime + t0, dur, type, vol, ac.destination);
+  }
+  function chimeRight(){ tone(523.25,0,.22); tone(659.25,.09,.22); tone(783.99,.18,.3); tone(1046.5,.27,.42); }
+  function chimeWrong(){ tone(294,0,.2,"triangle",.08); tone(233,.12,.26,"triangle",.08); }
+  function chimeWin(){ var n=[523.25,659.25,783.99,1046.5,783.99,1046.5,1318.5]; for(var i=0;i<n.length;i++){ tone(n[i], i*.13, .34); } }
+  function popSound(){ tone(500,0,.07,"triangle",.06); tone(760,.05,.09,"triangle",.05); }
+
+  /* ---------- background music: gentle pentatonic marimba loop, in code ---------- */
+  var MEL_A = [659.25,783.99,880,783.99, 659.25,587.33,659.25,783.99, 880,1046.5,880,783.99, 659.25,783.99,659.25,587.33];
+  var MEL_B = [523.25,659.25,783.99,880, 783.99,659.25,587.33,659.25, 698.46,880,783.99,659.25, 587.33,659.25,0,0];
+  var BASSN = [130.81, 98.00, 110.00, 98.00];
+  var STEP_DUR = 0.24;
+  var musicOn = true, musicPlaying = false, musStep = 0, musNext = 0, musTimer = null;
+  function scheduleStep(s, t){
+    var mel = ((Math.floor(s/16) % 2 === 0) ? MEL_A : MEL_B)[s % 16];
+    var dest = musicGain || actx.destination;
+    if(mel > 0){
+      toneAt(mel, t, .34, "sine", .05, dest);
+      toneAt(mel*2, t, .12, "sine", .012, dest);
+    }
+    if(s % 8 === 0){ toneAt(BASSN[(s >> 3) % 4], t, .55, "triangle", .04, dest); }
+    if(s % 16 === 15){ toneAt(1567.98, t, .3, "sine", .014, dest); }
+  }
+  function musicScheduler(){
+    if(!actx) return;
+    while(musNext < actx.currentTime + 0.20){
+      scheduleStep(musStep, musNext);
+      musNext += STEP_DUR; musStep++;
+    }
+  }
+  function startMusic(){
+    if(!musicOn || musicPlaying) return;
+    var ac = audio(); if(!ac) return;
+    musStep = 0; musNext = ac.currentTime + 0.08;
+    musTimer = setInterval(musicScheduler, 90);
+    musicPlaying = true;
+  }
+  function stopMusic(){
+    if(musTimer){ clearInterval(musTimer); musTimer = null; }
+    musicPlaying = false;
+  }
+
+  /* ---------- voice: Mia speaks (Web Speech API), graceful fallback ---------- */
+  var hasSpeech = ("speechSynthesis" in window);
+  var voiceOn = hasSpeech, voiceCache = null;
+  function pickVoice(){
+    if(!hasSpeech) return null;
+    try{
+      var vs = window.speechSynthesis.getVoices();
+      if(vs && vs.length){ voiceCache = vs; }
+      var list = voiceCache || vs || [], best = null, bestScore = -1, i, v, name, lang, s;
+      for(i=0;i<list.length;i++){
+        v = list[i]; name = v.name || ""; lang = v.lang || "";
+        if(!/^en/i.test(lang)) continue;
+        s = 0;
+        if(/google us english/i.test(name)) s += 60;
+        if(/natural/i.test(name)) s += 45;
+        if(/neural/i.test(name)) s += 45;
+        if(/premium|enhanced/i.test(name)) s += 35;
+        if(/google/i.test(name)) s += 25;
+        if(/aria|jenny|zira|samantha|allison|ava|joanna|salli|emma|amy|bella|ana|michelle|katie|lucy|linda|susan|catherine|karen|sarah|jessica|ashley/i.test(name)) s += 30;
+        if(/female/i.test(name)) s += 25;
+        if(/guy|christopher|eric|roger|brian|james|john|david|mark|kevin|andrew|brandon/i.test(name)) s -= 15;
+        if(/en[-_]US/i.test(lang)) s += 15;
+        else if(/en[-_]GB/i.test(lang)) s += 10;
+        else s += 4;
+        if(v.localService === false) s += 2;
+        if(s > bestScore){ bestScore = s; best = v; }
+      }
+      return best;
+    }catch(e){}
+    return null;
+  }
+  if(hasSpeech){
+    try{ window.speechSynthesis.onvoiceschanged = function(){ pickVoice(); }; pickVoice(); }catch(e){}
+  }
+  /* Speech waits for the child's first tap (browser rule); until then the
+     newest line waits and is spoken on first touch. The bubble always shows
+     the words on screen anyway. */
+  var speechUnlocked = false, pendingSay = null, pendingEmo = "instruct";
+  var EMO_PITCH = {story:1.03, question:1.10, praise:1.20, retry:0.95, instruct:1.05};
+  /* SPEECH QUEUE + GATE (the house standard): lines are spoken one at a time,
+     in order; a new line NEVER cancels the one Mia is speaking. The lab only
+     advances through afterMia(), which waits for the queue to drain. Every
+     utterance has a bounded watchdog so a silent device can never hang the
+     lab; with the voice OFF the gate releases at once. */
+  var sayQ = [], sayBusy = false, sayWdog = null, sayWaiters = [], saySeq = 0;
+  function sayEstimateMs(text){
+    var words = (text || "").split(/\s+/).filter(Boolean).length;
+    return Math.max(4000, Math.min(1800 + words * 620, 25000));
+  }
+  function speechActive(){
+    return !!(voiceOn && hasSpeech && speechUnlocked && (sayBusy || sayQ.length));
+  }
+  function releaseSayWaiters(){
+    if(sayBusy || sayQ.length) return;
+    var ws = sayWaiters; sayWaiters = [];
+    for(var i = 0; i < ws.length; i++){ try{ ws[i](); }catch(e){} }
+  }
+  function whenSpeechDone(cb){
+    if(!speechActive()){ cb(); return; }
+    sayWaiters.push(cb);
+  }
+  function afterMia(cb, minMs){
+    var t0 = Date.now();
+    whenSpeechDone(function(){
+      var wait = (minMs || 0) - (Date.now() - t0);
+      if(wait > 0){ setTimeout(cb, wait); } else { cb(); }
+    });
+  }
+  function pumpSpeech(){
+    if(sayBusy) return;
+    var item = sayQ.shift();
+    if(!item){ releaseSayWaiters(); return; }
+    sayBusy = true;
+    var gen = saySeq, finished = false;
+    function done(){
+      if(finished || gen !== saySeq) return;
+      finished = true;
+      if(sayWdog){ clearTimeout(sayWdog); sayWdog = null; }
+      sayBusy = false;
+      miaTalk(false);
+      pumpSpeech();
+    }
+    var u;
+    try{ u = new SpeechSynthesisUtterance(item.text); }
+    catch(e){ sayBusy = false; pumpSpeech(); return; }
+    u.lang = "en-US"; u.rate = 0.85; u.pitch = EMO_PITCH[item.emo] || 1.05;
+    var v = pickVoice(); if(v){ try{ u.voice = v; }catch(e){} }
+    u.onstart = function(){ if(gen === saySeq){ miaTalk(true, item.emo); } };
+    u.onend = done;
+    u.onerror = done;
+    u.onboundary = function(){ if(gen === saySeq){ miaPulse(); } };
+    sayWdog = setTimeout(done, sayEstimateMs(item.text));
+    try{ window.speechSynthesis.speak(u); }
+    catch(e){ done(); }
+  }
+  function speak(text, emo){
+    if(!voiceOn || !hasSpeech || !text) return;
+    emo = emo || "instruct";
+    if(!speechUnlocked){ pendingSay = text; pendingEmo = emo; return; }
+    var last = sayQ[sayQ.length - 1];
+    if(last && last.text === text && last.emo === emo) return;
+    sayQ.push({text:text, emo:emo});
+    pumpSpeech();
+  }
+  window.addEventListener("pointerdown", function(){
+    if(speechUnlocked) return;
+    speechUnlocked = true;
+    if(pendingSay){ var t = pendingSay, pe = pendingEmo; pendingSay = null; speak(t, pe); }
+  }, true);
+  function stopSpeak(){
+    saySeq++;
+    sayQ.length = 0;
+    if(sayWdog){ clearTimeout(sayWdog); sayWdog = null; }
+    sayBusy = false;
+    miaTalk(false);
+    if(hasSpeech){ try{ window.speechSynthesis.cancel(); }catch(e){} }
+    releaseSayWaiters();
+  }
+
+  /* ---------- toggles (parent controls) ---------- */
+  var musicBtn = document.getElementById("musicBtn"),
+      voiceBtn = document.getElementById("voiceBtn");
+  if(!hasSpeech){ voiceBtn.style.display = "none"; }
+  musicBtn.addEventListener("click", function(){
+    musicOn = !musicOn;
+    musicBtn.classList.toggle("off", !musicOn);
+    musicBtn.setAttribute("aria-pressed", musicOn ? "true" : "false");
+    if(musicOn){ startMusic(); } else { stopMusic(); }
+  });
+  voiceBtn.addEventListener("click", function(){
+    voiceOn = !voiceOn;
+    voiceBtn.classList.toggle("off", !voiceOn);
+    voiceBtn.setAttribute("aria-pressed", voiceOn ? "true" : "false");
+    if(!voiceOn){ stopSpeak(); }
+  });
+
+  /* ---------- drifting petals ---------- */
+  (function petals(){
+    var box = document.getElementById("petals");
+    var colours = ["#CDEFF2","#E6F4F5","#FFE9A8","#BFE6EA"];
+    for(var i=0;i<9;i++){
+      var p = document.createElement("span");
+      p.className = "petal";
+      var w = 9 + Math.random()*8;
+      p.style.width = w + "px"; p.style.height = (w*1.35) + "px";
+      p.style.left = (Math.random()*96) + "vw";
+      p.style.background = colours[i % colours.length];
+      p.style.animationDuration = (11 + Math.random()*9) + "s";
+      p.style.animationDelay = (-Math.random()*16) + "s";
+      box.appendChild(p);
+    }
+  })();
+
+  /* ---------- shared UI pieces ---------- */
+  var speechEl = document.getElementById("speech"),
+      praiseEl = document.getElementById("praise"),
+      scoreBox = document.getElementById("scoreBox"),
+      scoreCountEl = document.getElementById("scoreCount"),
+      mascotEl = document.getElementById("mascot"),
+      mascotWrap = document.getElementById("mascotWrap"),
+      thumbPopEl = document.getElementById("thumbPop"),
+      dockEl = document.getElementById("dock"),
+      titleView = document.getElementById("titleView"),
+      startBtn = document.getElementById("startBtn"),
+      endOverlay = document.getElementById("endOverlay"),
+      finalStarsEl = document.getElementById("finalStars");
+
+  var stars = 0, lastPrompt = "";
+  function updateStars(bumpIt){
+    scoreCountEl.textContent = stars;
+    if(bumpIt){ scoreBox.classList.remove("bump"); void scoreBox.offsetWidth; scoreBox.classList.add("bump"); }
+  }
+  function miaTalk(on, emo){
+    if(!mascotWrap) return;
+    if(emo){ mascotWrap.dataset.emotion = emo; }
+    mascotWrap.classList.toggle("speaking", !!on);
+    if(!on){ mascotWrap.classList.remove("pulse"); }
+  }
+  function miaPulse(){
+    if(!mascotWrap) return;
+    mascotWrap.classList.remove("pulse"); void mascotWrap.offsetWidth; mascotWrap.classList.add("pulse");
+    setTimeout(function(){ mascotWrap.classList.remove("pulse"); }, 280);
+  }
+  function thumbPopNow(){
+    if(!thumbPopEl) return;
+    thumbPopEl.classList.remove("pop"); void thumbPopEl.offsetWidth; thumbPopEl.classList.add("pop");
+  }
+  function pointMia(){
+    if(!mascotWrap) return;
+    mascotWrap.classList.add("pointing");
+    setTimeout(function(){ mascotWrap.classList.remove("pointing"); }, 1400);
+  }
+  function mascotReact(cls){
+    mascotEl.classList.remove("cheer","encourage"); void mascotEl.offsetWidth;
+    if(cls){ mascotEl.classList.add(cls); }
+    if(cls === "cheer"){ thumbPopNow(); }
+  }
+  function say(text, emo){
+    speechEl.textContent = text;
+    lastPrompt = text;
+    if(emo === false) return;
+    speak(text, (typeof emo === "string") ? emo : "instruct");
+  }
+  function praise(text){
+    praiseEl.textContent = text; praiseEl.classList.add("show");
+  }
+  function clearPraise(){
+    praiseEl.textContent = ""; praiseEl.classList.remove("show");
+  }
+  function burstIn(container, leftPct, topPct, n){
+    for(var i=0;i<(n||7);i++){
+      var s = document.createElement("div");
+      s.className = "burst-star"; s.innerHTML = STAR;
+      var size = 18 + Math.random()*18;
+      s.style.width = size+"px"; s.style.height = size+"px";
+      s.style.left = leftPct+"%"; s.style.top = topPct+"%";
+      s.style.setProperty("--dx", (Math.random()*260-130)+"px");
+      s.style.setProperty("--dy", (Math.random()*-160-30)+"px");
+      container.appendChild(s);
+      (function(el){ setTimeout(function(){ el.remove(); }, 900); })(s);
+    }
+  }
+  /* every correct touch is appreciated: spoken praise, a happy Mia, a chime,
+     a star burst — exactly like the chapter games */
+  function celebrate(cardEl){
+    var p = PRAISE[Math.floor(Math.random()*PRAISE.length)];
+    praise(p);
+    mascotReact("cheer");
+    chimeRight(); buzz();
+    speak(p, "praise");
+    if(cardEl){ burstIn(cardEl, 50, 30, 7); }
+  }
+  function onWrong(btn, retryLine){
+    btn.classList.remove("wrong"); void btn.offsetWidth; btn.classList.add("wrong");
+    mascotReact("encourage");
+    chimeWrong();
+    say(retryLine, "retry");
+  }
+  dockEl.addEventListener("click", function(){
+    if(lastPrompt){ speak(lastPrompt, "instruct"); }
+  });
+  function rainCelebration(){
+    var colours = ["#E85D3D","#FFC93C","#3E9B4F","#4A90C2","#B04FA0"];
+    for(var i=0;i<26;i++){
+      var c = document.createElement("div");
+      if(i % 3 === 0){ c.className = "fall-star"; c.innerHTML = STAR; c.style.width = "30px"; c.style.height = "30px"; }
+      else { c.className = "confetti"; c.style.width = "9px"; c.style.height = "15px"; c.style.background = colours[i % colours.length]; }
+      c.style.left = (Math.random()*96) + "vw";
+      c.style.animationDuration = (2.4 + Math.random()*2.2) + "s";
+      c.style.animationDelay = (Math.random()*0.9) + "s";
+      document.body.appendChild(c);
+      (function(el){ setTimeout(function(){ el.remove(); }, 6000); })(c);
+    }
+  }
+
+  /* ================= THE LAB FLOW ================= */
+  function el(id){ return document.getElementById(id); }
+  var views = [null, el("station1View"), el("station2View"), el("station3View")];
+  var doneFlags = {1:false, 2:false, 3:false};
+  function gateBtn(btn, minMs){
+    btn.classList.add("waiting"); btn.disabled = true;
+    afterMia(function(){ btn.classList.remove("waiting"); btn.disabled = false; }, minMs);
+  }
+  function gateRow(rowEl, ms){
+    rowEl.classList.add("locked");
+    setTimeout(function(){ rowEl.classList.remove("locked"); }, ms || 500);
+  }
+  function showStation(n){
+    titleView.hidden = true;
+    for(var i=1;i<=3;i++){
+      views[i].hidden = (i !== n);
+      el("chip"+i).classList.toggle("now", i === n && !doneFlags[i]);
+    }
+    clearPraise();
+    pointMia();
+    say(INTRO_LINE[n], "question");
+    window.scrollTo(0, 0);
+  }
+  function finishStation(n, resultLine, nextRow, nextBtn){
+    doneFlags[n] = true;
+    stars++; updateStars(true);
+    var chip = el("chip"+n);
+    chip.classList.remove("now"); chip.classList.add("done");
+    chip.textContent = "⭐ " + n + " · " + NAMES[n];
+    if(resultLine){ say(resultLine, "story"); }
+    burstIn(el("card"+n), 50, 14, 9);
+    nextRow.hidden = false;
+    gateBtn(nextBtn, 1100);
+  }
+  function showFinish(){
+    for(var i=1;i<=3;i++){ views[i].hidden = true; }
+    finalStarsEl.textContent = "You earned " + stars + " ⭐ stars!";
+    endOverlay.hidden = false;
+    chimeWin(); rainCelebration(); buzz();
+    say(FINISH_LINE, "praise");
+    window.scrollTo(0, 0);
+  }
+  el("s1NextBtn").addEventListener("click", function(){ popSound(); showStation(2); });
+  el("s2NextBtn").addEventListener("click", function(){ popSound(); showStation(3); });
+  el("s3NextBtn").addEventListener("click", function(){ popSound(); showFinish(); });
+  el("againBtn").addEventListener("click", function(){ location.reload(); });
+  startBtn.addEventListener("click", function(){
+    audio(); startMusic();
+    showStation(1);
+  });
+
+  var NAMES = ["", "Which Motion?", "Ramp Racers", "Push and Measure"];
+  var INTRO_LINE = ["",
+    "Station 1! Which Motion? Watch, then choose!",
+    "Station 2! Ramp Racers. Tap GO and watch the balls roll!",
+    "Station 3! Push and Measure. Push the ball and count!"];
+  var FINISH_LINE = "You did it! You raced, rolled and measured like a real scientist!";
+
+  /* ---------- STATION 1: which motion? ---------- */
+  var SCENES = [
+    {g:"sceneCar", ans:"straight", cap:"Watch the car go!"},
+    {g:"sceneSwing", ans:"backforth", cap:"Watch the swing move!"},
+    {g:"sceneMerry", ans:"circle", cap:"Watch it turn!"}
+  ];
+  var scIdx = 0, scBusy = false;
+  function showScene(i){
+    for(var k=0;k<SCENES.length;k++){ el(SCENES[k].g).style.display = (k===i) ? "" : "none"; }
+    el("s1Cap").textContent = SCENES[i].cap;
+    var row = el("s1Btns"); row.classList.add("locked");
+    setTimeout(function(){
+      row.classList.remove("locked");
+      say("Which motion is this?", "question");
+    }, 2300);
+  }
+  /* showStation is called for station 1 at start; hook the first scene in */
+  var _origShow1 = showStation;
+  showStation = function(n){
+    _origShow1(n);
+    if(n === 1){ showScene(0); }
+  };
+  (function(){
+    var btns = el("s1Btns").querySelectorAll(".ans-btn");
+    for(var i=0;i<btns.length;i++){
+      (function(btn){
+        btn.addEventListener("click", function(){
+          if(scBusy || el("s1Btns").classList.contains("locked")) return;
+          if(btn.getAttribute("data-m") === SCENES[scIdx].ans){
+            scBusy = true;
+            btn.classList.add("right");
+            celebrate(el("card1"));
+            var names = {straight:"Yes! Straight line motion!", circle:"Yes! Round and round!", backforth:"Yes! Back and forth!"};
+            say(names[SCENES[scIdx].ans], "praise");
+            setTimeout(function(){
+              btn.classList.remove("right");
+              scBusy = false;
+              if(scIdx < SCENES.length - 1){ scIdx++; showScene(scIdx); }
+              else { finishStation(1, "", el("s1Next"), el("s1NextBtn")); }
+            }, 2200);
+          } else {
+            onWrong(btn, "Watch it move again! Which motion is it?");
+            var g = el(SCENES[scIdx].g);
+            g.style.display = "none"; void g.getBoundingClientRect(); g.style.display = "";
+          }
+        });
+      })(btns[i]);
+    }
+  })();
+
+  /* ---------- STATION 2: ramp racers ---------- */
+  var raced = false;
+  function rollBall(ball, path, dur, done){
+    var t0 = Date.now();
+    var iv = setInterval(function(){
+      var k = Math.min(1, (Date.now() - t0) / dur);
+      var total = path.length - 1, seg = Math.min(total - 1, Math.floor(k * total)), f = k * total - seg;
+      var x = path[seg][0] + (path[seg+1][0] - path[seg][0]) * f;
+      var y = path[seg][1] + (path[seg+1][1] - path[seg][1]) * f;
+      ball.setAttribute("cx", x.toFixed(1)); ball.setAttribute("cy", y.toFixed(1));
+      if(k >= 1){ clearInterval(iv); done(); }
+    }, 30);
+  }
+  el("s2Go").addEventListener("click", function(){
+    if(raced) return; raced = true;
+    audio(); popSound();
+    el("s2Go").disabled = true; el("s2Go").classList.add("waiting");
+    el("s2Cap").textContent = "They are rolling! Watch where they stop!";
+    /* track squares: x0=112, size 32, step 38 -> centres 128,166,204,242,280,318.
+       Red (steep) stops at square 5 (x=280); blue (gentle) stops at square 2 (x=166). */
+    var doneCount = 0;
+    function bothDone(){
+      doneCount++;
+      if(doneCount < 2) return;
+      el("s2Cap").textContent = "The red ball rolled to square 5! The blue ball stopped at square 2.";
+      say("The steeper ramp made the ball roll farther!", "story");
+      afterMia(function(){
+        el("s2Ans").hidden = false;
+        el("s2Cap").textContent = "How many squares did the red ball cross?";
+        say("How many squares did the red ball cross?", "question");
+      }, 600);
+    }
+    rollBall(el("s2BallA"), [[40,23],[76,52],[104,81],[280,81]], 1700, bothDone);
+    rollBall(el("s2BallB"), [[36,149],[92,182],[146,207],[166,207]], 1700, bothDone);
+  });
+  (function(){
+    var btns = el("s2Ans").querySelectorAll(".ans-btn");
+    for(var i=0;i<btns.length;i++){
+      (function(btn){
+        btn.addEventListener("click", function(){
+          if(btn.getAttribute("data-n") === "5"){
+            btn.classList.add("right");
+            celebrate(el("card2"));
+            say("Yes! The red ball crossed 5 squares!", "praise");
+            setTimeout(function(){
+              finishStation(2, "", el("s2Next"), el("s2NextBtn"));
+            }, 1800);
+          } else {
+            onWrong(btn, "Count the squares under the red ball again!");
+          }
+        });
+      })(btns[i]);
+    }
+  })();
+
+  /* ---------- STATION 3: push and measure ---------- */
+  /* track squares 0..8: centre of square k = 31 + 36k ; ball rests with cy=114 */
+  var pushRound = 1, pushing = false;
+  function pushBall(toK, done){
+    var ball = el("s3Ball");
+    var fromX = parseFloat(ball.getAttribute("cx")), toX = 31 + 36 * toK;
+    var t0 = Date.now(), dur = 1100;
+    var iv = setInterval(function(){
+      var k = Math.min(1, (Date.now() - t0) / dur);
+      var e = 1 - Math.pow(1 - k, 2);
+      ball.setAttribute("cx", (fromX + (toX - fromX) * e).toFixed(1));
+      el("s3Hand").setAttribute("x", (fromX + (toX - fromX) * e).toFixed(1));
+      if(k >= 1){ clearInterval(iv); done(); }
+    }, 30);
+  }
+  el("s3Push").addEventListener("click", function(){
+    if(pushing) return; pushing = true;
+    audio(); popSound();
+    el("s3Push").disabled = true; el("s3Push").classList.add("waiting");
+    if(pushRound === 1){
+      el("s3Hand").textContent = "👋";
+      pushBall(2, function(){
+        pushing = false;
+        el("s3Cap").textContent = "It stopped! How far did it go?";
+        el("s3Ans1").hidden = false;
+        say("How far did it go?", "question");
+      });
+    } else {
+      el("s3Hand").textContent = "💪";
+      el("s3Ball").setAttribute("cx", "31");
+      el("s3Hand").setAttribute("x", "31");
+      pushBall(6, function(){
+        pushing = false;
+        el("s3Cap").textContent = "It rolled much farther! How far did it go?";
+        el("s3Ans2").hidden = false;
+        say("How far did it go?", "question");
+      });
+    }
+  });
+  function wirePushAns(rowId, correct, onOk){
+    var btns = el(rowId).querySelectorAll(".ans-btn");
+    for(var i=0;i<btns.length;i++){
+      (function(btn){
+        btn.addEventListener("click", function(){
+          if(btn.getAttribute("data-n") === correct){
+            btn.classList.add("right");
+            celebrate(el("card3"));
+            onOk();
+          } else {
+            onWrong(btn, "Look where the ball stopped. Count the squares!");
+          }
+        });
+      })(btns[i]);
+    }
+  }
+  wirePushAns("s3Ans1", "2", function(){
+    say("Yes! It went to square 2!", "praise");
+    setTimeout(function(){
+      el("s3Ans1").hidden = true;
+      pushRound = 2;
+      el("s3Ball").setAttribute("cx", "31");
+      el("s3Hand").setAttribute("x", "31");
+      el("s3Hand").textContent = "💪";
+      el("s3Cap").textContent = "Round 2: now a BIG push!";
+      var p = el("s3Push");
+      p.textContent = "Big push 💪"; p.disabled = false; p.classList.remove("waiting");
+      say("Now try a big push!", "instruct");
+    }, 2000);
+  });
+  wirePushAns("s3Ans2", "6", function(){
+    say("Yes! It went to square 6!", "praise");
+    setTimeout(function(){
+      el("s3Ans2").hidden = true;
+      finishStation(3, "A bigger push makes it travel farther!", el("s3Next"), el("s3NextBtn"));
+    }, 1800);
+  });
+
+  say("Hello! I am Mia! Welcome to my Motion Lab! Let us race, roll and measure!", "story");
+
+})();
+
+</script>
+</body>
+</html>
