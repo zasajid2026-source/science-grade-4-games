@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Mia's Static Roller Lab · Chapter 11 · Science Grade 4</title>
+<link rel="icon" href="data:,">
+<style>
+  :root{
+    /* Chapter 11 skin — Part 2 LEAF GREEN, identical to c11.html */
+    --col:#43A047; --deep:#2E7031; --tint:#EAF5EA;
+    --cream:#FFF7E0; --amber:#E8A020; --magenta:#2E7031;
+    --sky:var(--tint); --ink:#1F2430; --teal:var(--col); --teal-dark:var(--deep);
+    --gold:var(--amber); --green:#3E9B4F; --green-dark:#2F7D3E;
+    --card-shadow:0 10px 24px rgba(46,112,49,.16);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  [hidden]{display:none !important;}
+  html,body{height:100%;}
+  body{
+    font-family:"Comic Neue","Baloo 2","Comic Sans MS","Chalkboard SE","Segoe UI Rounded",ui-rounded,system-ui,sans-serif;
+    background:linear-gradient(180deg,#EAF5EA 0%,#DDEEDE 100%);
+    color:var(--ink); touch-action:manipulation; overflow-x:hidden;
+    display:flex; flex-direction:column; align-items:center; min-height:100dvh;
+  }
+  body::before, body::after{
+    content:""; position:fixed; left:0; right:0; height:14px; z-index:5; pointer-events:none;
+    background-image:
+      radial-gradient(circle at 10px 7px, #43A047 4.5px, transparent 5px),
+      radial-gradient(circle at 34px 7px, #E8A020 4.5px, transparent 5px),
+      radial-gradient(circle at 58px 7px, #2E7031 4.5px, transparent 5px);
+    background-size:72px 14px; background-repeat:repeat-x;
+  }
+  body::before{top:0;} body::after{bottom:0;}
+  .bg-hills,.bg-grass{position:fixed; left:-6%; width:112%; z-index:-2; pointer-events:none;}
+  .bg-hills{bottom:5vh; height:30vh; opacity:.5; animation:drift1 26s ease-in-out infinite alternate;}
+  .bg-grass{bottom:-4px; height:13vh; z-index:-1; opacity:.75; animation:drift2 19s ease-in-out infinite alternate;}
+  @keyframes drift1{from{transform:translateX(-10px)}to{transform:translateX(12px)}}
+  @keyframes drift2{from{transform:translateX(12px)}to{transform:translateX(-12px)}}
+  .petal{
+    position:fixed; top:-4vh; z-index:-1; pointer-events:none; border-radius:62% 38% 62% 38%;
+    opacity:.8; animation:petalfall linear infinite;
+  }
+  @keyframes petalfall{
+    0%{transform:translate(0,-4vh) rotate(0deg);}
+    100%{transform:translate(7vw,108vh) rotate(320deg);}
+  }
+  /* ---------- top bar ---------- */
+  .topbar{
+    width:100%; max-width:560px; display:flex; align-items:center; justify-content:space-between;
+    padding:16px 14px 4px; gap:8px;
+  }
+  .home-btn{
+    text-decoration:none; background:#fff; color:var(--deep); font-weight:800; font-size:15px;
+    border:3px solid #98CB9A; border-radius:999px; padding:7px 14px; box-shadow:0 3px 0 #98CB9A;
+  }
+  .home-btn:active{transform:translateY(2px); box-shadow:none;}
+  .unit-chip{
+    background:#E6F4F5; color:var(--deep); font-weight:800; font-size:14px;
+    border-radius:999px; padding:8px 12px; text-align:center; line-height:1.15;
+  }
+  .scorebox{
+    display:flex; align-items:center; gap:5px; background:#fff; border:3px solid #FFE1A1;
+    border-radius:999px; padding:6px 13px 6px 9px; font-size:17px; font-weight:800; color:#B97A0B;
+    box-shadow:0 3px 0 #FFE1A1; min-width:104px; justify-content:center;
+  }
+  .scorebox svg{width:24px;height:24px;flex:none;}
+  .scorebox.bump{animation:bump .45s ease;}
+  @keyframes bump{0%{transform:scale(1)}40%{transform:scale(1.18) rotate(-3deg)}100%{transform:scale(1)}}
+  .toggles{
+    width:100%; max-width:560px; display:flex; gap:8px; justify-content:flex-end; padding:6px 14px 0;
+  }
+  .tgl{
+    border:3px solid #CAE4CB; background:#fff; border-radius:999px; padding:5px 13px; cursor:pointer;
+    font-family:inherit; font-weight:800; font-size:13.5px; color:var(--ink); box-shadow:0 3px 0 #CAE4CB;
+    transition:transform .12s, box-shadow .12s, opacity .2s;
+  }
+  .tgl:active{transform:translateY(2px); box-shadow:none;}
+  .tgl.off{opacity:.5; filter:grayscale(.8);}
+  .partline{
+    margin-top:8px; background:#fff; border:3px solid #98CB9A; color:var(--deep);
+    font-weight:800; font-size:14.5px; border-radius:999px; padding:5px 16px; box-shadow:0 3px 0 #98CB9A;
+  }
+  /* ---------- Mia dock: sprite + speech bubble ---------- */
+  .dock{
+    position:relative; width:100%; max-width:560px; display:flex; align-items:flex-end; gap:4px;
+    padding:4px 14px 0; cursor:pointer;
+  }
+  .mascot{
+    width:80px; height:80px; flex:none; object-fit:cover; border-radius:50%;
+    border:4px solid var(--gold); background:#fff;
+    transform-origin:50% 100%; pointer-events:none;
+    animation:breathe 3.2s ease-in-out infinite;
+    filter:drop-shadow(0 6px 6px rgba(46,112,49,.22));
+  }
+  @keyframes breathe{0%,100%{transform:translateY(0) scale(1,1)}50%{transform:translateY(-3px) scale(1.015,.99)}}
+  .mascot.cheer{animation:cheer .62s ease 2;}
+  @keyframes cheer{
+    0%{transform:translateY(0)}35%{transform:translateY(-18px) rotate(-3deg) scale(1.05)}
+    70%{transform:translateY(0) rotate(2deg)}100%{transform:translateY(0)}
+  }
+  .mascot.encourage{animation:encourage .7s ease;}
+  @keyframes encourage{
+    0%{transform:rotate(0)}30%{transform:rotate(-5deg) translateY(-2px)}
+    65%{transform:rotate(4deg)}100%{transform:rotate(0)}
+  }
+  .mascot-wrap{position:relative; width:80px; height:80px; flex:none;}
+  .dock .mascot{width:100%; height:100%;}
+  @media (max-height:660px){ .dock .mascot-wrap{width:64px; height:64px;} }
+  .mouth{
+    position:absolute; left:49%; top:66%; width:10%; height:8%;
+    background:#4A2C20; border-radius:50%; opacity:0; pointer-events:none;
+    transform:scaleY(.18); transform-origin:center; transition:opacity .15s;
+  }
+  .mouth::after{
+    content:""; position:absolute; left:20%; right:20%; bottom:6%; height:38%;
+    background:#E88CA0; border-radius:50%;
+  }
+  .mascot-wrap.speaking .mouth{opacity:1; animation:mouthTalk .32s ease-in-out infinite alternate;}
+  @keyframes mouthTalk{from{transform:scaleY(.18)} to{transform:scaleY(1)}}
+  .mascot-wrap[data-emotion="praise"] .mouth{width:13%; left:47.5%;}
+  .mascot-wrap[data-emotion="retry"] .mouth{animation-duration:.52s;}
+  .mascot-wrap[data-emotion="story"] .mouth{animation-duration:.42s;}
+  .mascot-wrap.speaking{filter:drop-shadow(0 0 9px rgba(245,166,35,.55));}
+  .mascot-wrap.pulse .mascot{animation:miapulse .26s ease;}
+  @keyframes miapulse{40%{transform:scale(1.07) translateY(-2px)}}
+  .mascot-wrap.pointing .mascot{animation:pointlean 1s ease-in-out infinite;}
+  @keyframes pointlean{0%,100%{transform:translateX(0) rotate(0)}50%{transform:translateX(4px) rotate(2.5deg)}}
+  .thumb-pop{
+    position:absolute; right:-18px; top:-16px; font-size:34px; z-index:3;
+    opacity:0; pointer-events:none;
+  }
+  .thumb-pop.pop{animation:thumbpop .9s ease;}
+  @keyframes thumbpop{
+    0%{opacity:0; transform:scale(.3) rotate(-14deg)}
+    30%{opacity:1; transform:scale(1.25) rotate(4deg)}
+    70%{opacity:1} 100%{opacity:0; transform:scale(1) translateY(-8px)}
+  }
+  .bubble{
+    flex:1; position:relative; margin:0 0 12px 6px; background:#E6F4F5; border:3px solid #98CB9A;
+    color:var(--deep); font-size:clamp(20px,5.8vw,26px); font-weight:800; text-align:center;
+    border-radius:22px; padding:10px 16px; line-height:1.25; box-shadow:0 4px 10px rgba(46,112,49,.12);
+  }
+  .bubble::before{
+    content:""; position:absolute; left:-13px; bottom:14px; width:20px; height:20px;
+    background:#E6F4F5; border-left:3px solid #98CB9A; border-bottom:3px solid #98CB9A;
+    transform:rotate(45deg); border-bottom-left-radius:6px;
+  }
+  .praise{
+    min-height:32px; text-align:center; font-size:clamp(19px,5.4vw,25px); font-weight:800; color:#095A62;
+    padding:2px 10px 0; opacity:0; transform:scale(.8); transition:all .25s;
+  }
+  .praise.show{opacity:1; transform:scale(1);}
+  /* ---------- title screen ---------- */
+  #titleView{width:100%; display:flex; flex-direction:column; align-items:center;}
+  .story-wrap{
+    width:100%; max-width:560px; display:flex; gap:10px; align-items:flex-start;
+    padding:8px 12px 0;
+  }
+  .story-mia{
+    width:92px; height:92px; flex:none; object-fit:cover; border-radius:50%;
+    border:4px solid var(--gold); background:#FFF7E0;
+    box-shadow:var(--card-shadow); display:block; transform-origin:50% 100%;
+  }
+  .story-card{
+    flex:1; min-width:0; background:#E6F4F5; border:4px solid var(--teal);
+    border-radius:26px; padding:16px 16px 14px; box-shadow:var(--card-shadow); text-align:center;
+  }
+  .own-badge{
+    display:inline-block; background:var(--amber); color:#5C3A00; font-weight:800;
+    font-size:13.5px; letter-spacing:1.2px; border-radius:999px; padding:7px 18px;
+    box-shadow:0 3px 0 #B97A0B; margin-bottom:10px;
+  }
+  .story-title{
+    font-size:clamp(25px,6.8vw,33px); font-weight:800; color:var(--deep);
+    text-align:center; line-height:1.15; margin-bottom:8px;
+  }
+  .story-sub{
+    font-size:clamp(19px,5.4vw,23px); font-weight:800; color:#B97A0B; text-align:center; margin-bottom:8px;
+  }
+  .intro-text{
+    font-size:clamp(17.5px,5vw,21px); font-weight:700; text-align:center;
+    color:#1F2430; line-height:1.35;
+  }
+  .play-btn{
+    margin:14px auto 6px; background:var(--teal); color:#fff; border:none; cursor:pointer;
+    font-family:inherit; font-size:clamp(22px,6vw,27px); font-weight:800; border-radius:999px;
+    padding:16px 38px; box-shadow:0 7px 0 var(--teal-dark);
+    transition:transform .12s, box-shadow .12s, opacity .2s;
+    animation:playglow 1.6s ease-in-out infinite;
+  }
+  @keyframes playglow{
+    0%,100%{box-shadow:0 7px 0 var(--teal-dark), 0 0 0 0 rgba(246,184,28,0);}
+    50%{box-shadow:0 7px 0 var(--teal-dark), 0 0 0 13px rgba(246,184,28,.38);}
+  }
+  .play-btn:active{transform:translateY(5px); box-shadow:0 2px 0 var(--teal-dark);}
+  .play-btn.listening{animation:none; opacity:.75;}
+  .play-btn.waiting{animation:none; opacity:.55; filter:saturate(.55);}
+  .play-btn.ready{animation:playglow 1.1s ease-in-out infinite; opacity:1;}
+  .play-btn:disabled{cursor:default;}
+  /* ---------- station map chips ---------- */
+  .station-map{
+    width:100%; max-width:560px; display:flex; gap:8px; justify-content:center; flex-wrap:wrap;
+    padding:10px 12px 0;
+  }
+  .st-chip{
+    background:#fff; border:3px solid #CAE4CB; color:var(--deep); font-weight:800; font-size:14.5px;
+    border-radius:999px; padding:6px 13px; box-shadow:0 3px 0 #CAE4CB;
+  }
+  .st-chip.now{border-color:var(--teal); background:var(--tint);}
+  .st-chip.done{border-color:var(--green); background:#EAF7EE; color:var(--green-dark); box-shadow:0 3px 0 var(--green-dark);}
+  /* ---------- lab station cards ---------- */
+  .lab-view{width:100%; display:flex; flex-direction:column; align-items:center;}
+  .lab-card{
+    position:relative; width:calc(100% - 24px); max-width:536px; margin:8px auto 4px; background:#fff;
+    border:4px solid var(--teal); border-radius:24px; padding:16px 12px 18px;
+    box-shadow:var(--card-shadow); text-align:center;
+  }
+  .station-head{
+    font-size:clamp(21px,6vw,26px); font-weight:800; color:var(--deep); line-height:1.2; margin-bottom:4px;
+  }
+  .scene{width:100%; max-width:430px; margin:2px auto 0;}
+  .scene svg{width:100%; height:auto; display:block;}
+  .scene-cap{font-size:16px; font-weight:800; color:#A07B4F; margin-top:2px; line-height:1.3;}
+  /* ---------- tool/test options (same tiles as the chapter games) ---------- */
+  .opts{
+    width:100%; max-width:536px; display:grid; grid-template-columns:repeat(3,1fr); gap:10px;
+    padding:12px 2px 4px; margin:0 auto;
+  }
+  .opt{
+    position:relative; border:4px solid #fff; border-radius:24px; padding:10px 6px 10px; cursor:pointer;
+    display:flex; flex-direction:column; align-items:center; gap:6px;
+    transition:transform .13s, box-shadow .13s, opacity .25s, background .25s;
+    font-family:inherit; min-height:118px; justify-content:center;
+  }
+  .opt svg{width:100%; height:76px; border-radius:15px; display:block; pointer-events:none;}
+  .opt span{font-size:19px; font-weight:800; color:var(--ink); line-height:1.05; text-align:center;}
+  .opt[data-tint="a"]{background:#DDEEF0; box-shadow:0 7px 0 #7FB5BA, 0 11px 14px rgba(46,112,49,.16);}
+  .opt[data-tint="b"]{background:#FFF0C4; box-shadow:0 7px 0 #EFC078, 0 11px 14px rgba(160,110,40,.16);}
+  .opt[data-tint="c"]{background:#E2F3D8; box-shadow:0 7px 0 #A5D69B, 0 11px 14px rgba(90,140,80,.16);}
+  .opt[data-tint="d"]{background:#FDE3EC; box-shadow:0 7px 0 #EDA9C6, 0 11px 14px rgba(160,80,110,.16);}
+  .opt:active{transform:translateY(5px);}
+  .opt.right{
+    background:#BDEBC4 !important; border-color:var(--green);
+    animation:rightpop .5s ease; box-shadow:0 7px 0 var(--green-dark), 0 0 22px rgba(62,155,79,.55) !important;
+  }
+  @keyframes rightpop{0%{transform:scale(1)}40%{transform:scale(1.1) rotate(-2deg)}100%{transform:scale(1)}}
+  .opt.wrong{animation:wobble .45s ease;}
+  @keyframes wobble{0%,100%{transform:translateX(0)}20%{transform:translateX(-7px)}45%{transform:translateX(6px)}70%{transform:translateX(-4px)}90%{transform:translateX(2px)}}
+  .opts.locked{pointer-events:none; opacity:.55; filter:saturate(.6);}
+  .opt:disabled{cursor:default;}
+  .opt.tested{border-color:var(--green);}
+  .opt.tested::after{
+    content:"✓"; position:absolute; top:4px; right:10px; font-size:24px; font-weight:800; color:var(--green-dark);
+  }
+  /* ---------- action buttons ---------- */
+  .act-row{display:flex; flex-direction:column; align-items:center; margin-top:6px;}
+  .act-btn{
+    background:var(--teal); color:#fff; border:none; cursor:pointer; font-family:inherit;
+    font-size:clamp(21px,5.8vw,25px); font-weight:800; border-radius:999px; padding:15px 36px;
+    box-shadow:0 7px 0 var(--teal-dark); transition:transform .12s, box-shadow .12s, opacity .2s;
+  }
+  .act-btn:active{transform:translateY(5px); box-shadow:0 2px 0 var(--teal-dark);}
+  .act-btn.waiting{opacity:.55; filter:saturate(.55);}
+  .act-btn:disabled{cursor:default; opacity:.6;}
+  .hold-track{
+    width:82%; max-width:330px; height:17px; background:var(--tint); border:3px solid #98CB9A;
+    border-radius:999px; margin:12px auto 0; overflow:hidden;
+  }
+  .hold-fill{height:100%; width:0%; background:linear-gradient(90deg,#FFC93C,#43A047); border-radius:999px; transition:width .3s ease;}
+  .hold-hint{font-size:14.5px; font-weight:800; color:#A07B4F; margin-top:6px;}
+  .next-row{display:flex; justify-content:center; margin-top:14px;}
+  /* ---------- star burst ---------- */
+  .burst-star{position:absolute; pointer-events:none; z-index:6; animation:burst .85s ease-out forwards;}
+  @keyframes burst{
+    0%{transform:translate(0,0) scale(.4) rotate(0deg); opacity:1;}
+    100%{transform:translate(var(--dx),var(--dy)) scale(1.15) rotate(160deg); opacity:0;}
+  }
+  /* ---------- finish overlay ---------- */
+  .overlay{
+    position:fixed; inset:0; z-index:20; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    background:linear-gradient(180deg,#E6F4F5 0%,#D8ECEE 100%); padding:24px 18px; text-align:center; overflow-y:auto;
+  }
+  .overlay[hidden]{display:none;}
+  .overlay h1{font-size:clamp(27px,7.4vw,38px); font-weight:800; line-height:1.15; color:var(--deep);}
+  .overlay p{font-size:16px; font-weight:700; color:#7A97A5; margin-top:10px; max-width:420px; line-height:1.45;}
+  .overlay .game-name{
+    background:#fff; border:3px solid #FFE1A1; color:#B97A0B; border-radius:999px;
+    font-weight:800; font-size:17px; padding:7px 18px; margin-bottom:14px; box-shadow:0 3px 0 #FFE1A1;
+  }
+  .big-btn{
+    margin-top:20px; background:var(--teal); color:#fff; border:none; cursor:pointer; font-family:inherit;
+    font-size:26px; font-weight:800; border-radius:999px; padding:16px 44px;
+    box-shadow:0 7px 0 var(--teal-dark); transition:transform .12s, box-shadow .12s;
+  }
+  .big-btn:active{transform:translateY(5px); box-shadow:0 2px 0 var(--teal-dark);}
+  .mascot-dance{
+    width:118px; height:118px; object-fit:cover; border-radius:50%; border:5px solid var(--gold);
+    margin-top:8px; transform-origin:50% 100%; animation:dance .8s ease-in-out infinite;
+    filter:drop-shadow(0 7px 7px rgba(46,112,49,.25));
+  }
+  @keyframes dance{
+    0%,100%{transform:rotate(-4deg) translateY(0)}
+    50%{transform:rotate(4deg) translateY(-11px) scale(1.03)}
+  }
+  .moral-pill{
+    background:var(--teal); color:#fff; border-radius:999px; padding:10px 22px;
+    font-weight:800; font-size:17.5px; margin-top:12px; box-shadow:0 4px 0 var(--teal-dark); line-height:1.25;
+    display:inline-block;
+  }
+  .home-panel{
+    background:#fff; border:3px dashed var(--amber); border-radius:20px;
+    padding:14px 18px 12px; margin-top:16px; max-width:440px; text-align:center;
+  }
+  .home-title{font-size:20px; font-weight:800; color:#B97A0B;}
+  .home-text{font-size:15.5px !important; font-weight:700; color:var(--ink) !important; margin-top:6px !important; line-height:1.45;}
+  .src-line{font-size:12px !important; font-weight:700; color:#6E97A0 !important; margin-top:9px !important;}
+  .big-score{
+    font-size:clamp(30px,8.4vw,44px); font-weight:800; color:#B97A0B; margin-top:10px; line-height:1.1;
+  }
+  .fall-star{position:fixed; top:-46px; z-index:30; pointer-events:none; animation:fall linear forwards;}
+  @keyframes fall{to{transform:translateY(108dvh) rotate(320deg);}}
+  .confetti{position:fixed; top:-22px; z-index:30; pointer-events:none; border-radius:2px; animation:confall linear forwards;}
+  @keyframes confall{to{transform:translateY(108dvh) rotate(560deg);}}
+  .credit{font-size:12.5px; font-weight:700; color:#6E97A0; padding:0 10px 16px; text-align:center; margin-top:auto;}
+  @media (max-width:400px){
+    .story-mia{width:76px; height:76px;}
+    .opt span{font-size:16.5px;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:.01s !important; transition-duration:.01s !important;}
+  }
+
+  /* ---------- G4 lab extras: big answer buttons, scenes ---------- */
+  .ans-row{display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:12px; width:100%;}
+  .ans-row.locked{pointer-events:none; opacity:.55; filter:saturate(.6);}
+  .ans-btn{
+    flex:1 1 100px; min-height:54px; font-family:inherit; font-size:18px; font-weight:800; color:var(--ink);
+    background:#FFF7E0; border:3px solid var(--amber); border-radius:18px; padding:12px 10px; cursor:pointer;
+    box-shadow:0 4px 0 #B97A0B; transition:transform .12s, box-shadow .12s, background .25s;
+  }
+  .ans-btn:active{transform:translateY(3px); box-shadow:none;}
+  .ans-btn.right{background:#BDEBC4 !important; border-color:var(--green); box-shadow:0 4px 0 var(--green-dark);}
+  .ans-btn.wrong{animation:wobble .45s ease;}
+  .findable{cursor:pointer;}
+
+  /* ---------- Static Roller extras ---------- */
+  .elec{transition:opacity .35s ease;}
+  .test-anim{transition:transform .65s ease;}
+  .test-anim.up{transform:translateY(-21px);}
+  .stay-shake{animation:tinyshake .5s ease;}
+  @keyframes tinyshake{0%,100%{transform:translateX(0)}25%{transform:translateX(-3px)}55%{transform:translateX(3px)}80%{transform:translateX(-1.5px)}}
+  .sparkle-pop{animation:rightpop .5s ease 2;}
+</style>
+</head>
+<body>
+
+  <svg class="bg-hills" viewBox="0 0 1440 320" preserveAspectRatio="none" aria-hidden="true"><path d="M0,190 C240,110 420,240 720,190 C1020,140 1200,230 1440,170 L1440,320 L0,320 Z" fill="#CFE9EC"/><path d="M0,250 C260,190 520,290 820,250 C1100,215 1280,280 1440,240 L1440,320 L0,320 Z" fill="#AFD8DC" opacity=".7"/></svg>
+  <svg class="bg-grass" viewBox="0 0 1440 120" preserveAspectRatio="none" aria-hidden="true"><path d="M0,70 C200,40 380,95 620,70 C860,45 1100,90 1440,60 L1440,120 L0,120 Z" fill="#98CB9A"/></svg>
+  <div id="petals" aria-hidden="true"></div>
+
+  <div class="topbar">
+    <a class="home-btn" href="index.html">⌂ Chapters</a>
+    <div class="unit-chip">Chapter 11 · Static Sparks</div>
+    <div class="scorebox" id="scoreBox" aria-label="Stars you earned">
+      <svg viewBox="0 0 100 100" aria-hidden="true"><path d="M50 6 L63 37 L96 39 L70 60 L79 93 L50 74 L21 93 L30 60 L4 39 L37 37 Z" fill="#FFC93C" stroke="#E8A20C" stroke-width="5" stroke-linejoin="round"/></svg>
+      <span>Stars: <span id="scoreCount">0</span>/3</span>
+    </div>
+  </div>
+
+  <div class="toggles">
+    <button class="tgl" id="musicBtn" aria-pressed="true">🎵 Music</button>
+    <button class="tgl" id="voiceBtn" aria-pressed="true">🗣️ Voice</button>
+  </div>
+
+  <div class="partline" id="partLine">Part 2 · Energy, Sound, Light and Sparks</div>
+
+  <div class="station-map" id="stationMap">
+    <span class="st-chip" id="chip1">☆ 1 · Charge the Balloon</span>
+    <span class="st-chip" id="chip2">☆ 2 · Roll the Can</span>
+    <span class="st-chip" id="chip3">☆ 3 · What Can Static Pull?</span>
+  </div>
+
+  <div class="dock" id="dock" role="button" aria-label="Mia. Tap to hear her again.">
+    <div class="mascot-wrap" id="mascotWrap">
+      <img class="mascot" id="mascot" src="img/mia-face.jpg" alt="Mia, your science friend, smiling at you">
+      <div class="mouth" id="mouth" aria-hidden="true"></div>
+      <div class="thumb-pop" id="thumbPop" aria-hidden="true">👍</div>
+    </div>
+    <div class="bubble" id="speech">Hello! I am Mia!</div>
+  </div>
+
+  <div class="praise" id="praise" aria-live="polite"></div>
+
+  <div id="titleView">
+    <div class="story-wrap">
+      <img class="story-mia" id="storyMia" src="img/mia-stage.jpg" alt="Mia waving hello" draggable="false">
+      <div class="story-card">
+        <div class="own-badge">🧪 OUR OWN VIRTUAL LAB</div>
+        <div class="story-title">Mia's Static Roller Lab</div>
+        <div class="story-sub">⭐ Static Sparks! ⭐</div>
+        <p class="intro-text">Rub a balloon to charge it with static — then roll a can across the table without touching it!</p>
+      </div>
+    </div>
+    <button class="play-btn" id="startBtn">▶ Start the Lab</button>
+  </div>
+
+
+  <!-- STATION 1: CHARGE THE BALLOON -->
+  <div id="station1View" class="lab-view" hidden>
+    <div class="lab-card" id="card1">
+      <div class="station-head">Station 1 · Charge the Balloon!</div>
+      <div class="scene">
+        <svg viewBox="0 0 360 240" role="img" aria-label="A smiling child with a balloon pressed against the hair. Rubbing loads the balloon with electrons.">
+          <rect x="6" y="10" width="348" height="220" rx="14" fill="#FFF7E0"/>
+          <!-- the child -->
+          <path d="M60,230 L66,198 Q118,180 170,198 L176,230 Z" fill="#4A90C2"/>
+          <rect x="106" y="156" width="24" height="24" rx="8" fill="#F2C297"/>
+          <clipPath id="headClip"><circle cx="118" cy="118" r="50"/></clipPath>
+          <g clip-path="url(#headClip)">
+            <circle cx="118" cy="118" r="50" fill="#F7CD9F"/>
+            <ellipse cx="118" cy="74" rx="58" ry="31" fill="#6B4226"/>
+            <path d="M84,64 q6,16 0,30 M104,56 q6,18 2,34 M126,56 q-4,18 0,34 M146,64 q-6,16 -2,30" stroke="#57351D" stroke-width="4" fill="none" stroke-linecap="round"/>
+          </g>
+          <circle cx="118" cy="118" r="50" fill="none" stroke="#D89A5F" stroke-width="3"/>
+          <circle cx="100" cy="124" r="4.5" fill="#2B2B2B"/>
+          <circle cx="136" cy="124" r="4.5" fill="#2B2B2B"/>
+          <path d="M106,142 q12,10 24,0" stroke="#2B2B2B" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+          <circle cx="87" cy="137" r="6" fill="#F2A0A0" opacity=".65"/>
+          <circle cx="149" cy="137" r="6" fill="#F2A0A0" opacity=".65"/>
+          <!-- the balloon, rubbing on the hair -->
+          <g id="s1Balloon">
+            <ellipse cx="198" cy="70" rx="36" ry="44" fill="#D64545" stroke="#A92E2E" stroke-width="3"/>
+            <path d="M180,42 a36,44 0 0 1 22,-14" fill="none" stroke="#FFFFFF" stroke-width="4" opacity=".7" stroke-linecap="round"/>
+            <polygon points="192,114 204,114 198,124" fill="#A92E2E"/>
+            <path d="M198,124 q-8,16 2,28 q8,10 0,24" stroke="#8A6D2F" stroke-width="2.5" fill="none"/>
+            <g id="s1Electrons">
+              <g class="elec" opacity="0"><circle cx="174" cy="46" r="8.5" fill="#2F6491"/><text x="174" y="50.5" font-size="13" font-weight="800" fill="#fff" text-anchor="middle">−</text></g>
+              <g class="elec" opacity="0"><circle cx="198" cy="32" r="8.5" fill="#2F6491"/><text x="198" y="36.5" font-size="13" font-weight="800" fill="#fff" text-anchor="middle">−</text></g>
+              <g class="elec" opacity="0"><circle cx="222" cy="46" r="8.5" fill="#2F6491"/><text x="222" y="50.5" font-size="13" font-weight="800" fill="#fff" text-anchor="middle">−</text></g>
+              <g class="elec" opacity="0"><circle cx="166" cy="74" r="8.5" fill="#2F6491"/><text x="166" y="78.5" font-size="13" font-weight="800" fill="#fff" text-anchor="middle">−</text></g>
+              <g class="elec" opacity="0"><circle cx="230" cy="76" r="8.5" fill="#2F6491"/><text x="230" y="80.5" font-size="13" font-weight="800" fill="#fff" text-anchor="middle">−</text></g>
+              <g class="elec" opacity="0"><circle cx="178" cy="100" r="8.5" fill="#2F6491"/><text x="178" y="104.5" font-size="13" font-weight="800" fill="#fff" text-anchor="middle">−</text></g>
+              <g class="elec" opacity="0"><circle cx="216" cy="102" r="8.5" fill="#2F6491"/><text x="216" y="106.5" font-size="13" font-weight="800" fill="#fff" text-anchor="middle">−</text></g>
+              <g class="elec" opacity="0"><circle cx="198" cy="106" r="8.5" fill="#2F6491"/><text x="198" y="110.5" font-size="13" font-weight="800" fill="#fff" text-anchor="middle">−</text></g>
+            </g>
+          </g>
+          <g id="s1Sparkles" opacity="0">
+            <path d="M150,26 L152.8,34 L161,36.8 L152.8,39.6 L150,48 L147.2,39.6 L139,36.8 L147.2,34 Z" fill="#FFC93C" stroke="#E8A20C" stroke-width="1.6"/>
+            <path d="M252,20 L254.4,27 L261.5,29.4 L254.4,31.8 L252,39 L249.6,31.8 L242.5,29.4 L249.6,27 Z" fill="#FFC93C" stroke="#E8A20C" stroke-width="1.6"/>
+            <path d="M258,84 L260,90.5 L266.5,92.5 L260,94.5 L258,101 L256,94.5 L249.5,92.5 L256,90.5 Z" fill="#FFC93C" stroke="#E8A20C" stroke-width="1.6"/>
+            <path d="M146,98 L147.8,103.5 L153.5,105.3 L147.8,107 L146,112.5 L144.2,107 L138.5,105.3 L144.2,103.5 Z" fill="#FFC93C" stroke="#E8A20C" stroke-width="1.6"/>
+          </g>
+          <text x="118" y="226" font-size="12.5" font-weight="800" fill="#8A6D2F" text-anchor="middle">RUB ON THE HAIR!</text>
+        </svg>
+      </div>
+      <div class="scene-cap" id="s1Cap">Rub the balloon on the hair — tap the button 4 times!</div>
+      <div class="hold-track"><div class="hold-fill" id="s1ChargeFill"></div></div>
+      <div class="hold-hint">⚡ Static charge</div>
+      <div class="act-row" id="s1Act">
+        <button class="act-btn" id="s1Rub">Rub the Balloon! 🎈</button>
+      </div>
+      <div class="next-row" id="s1Next" hidden>
+        <button class="play-btn" id="s1NextBtn" style="margin:0">Next Station ▶</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATION 2: ROLL THE CAN -->
+  <div id="station2View" class="lab-view" hidden>
+    <div class="lab-card" id="card2">
+      <div class="station-head">Station 2 · Roll the Can — Without Touching!</div>
+      <div class="scene">
+        <svg viewBox="0 0 360 240" role="img" aria-label="A charged balloon held near a soda can lying on its side. The can rolls toward the balloon.">
+          <rect x="6" y="10" width="348" height="220" rx="14" fill="#FFF7E0"/>
+          <text x="34" y="152" font-size="11.5" font-weight="800" fill="#8A6D2F">START</text>
+          <line x1="34" y1="158" x2="34" y2="196" stroke="#C9B98A" stroke-width="3" stroke-linecap="round"/>
+          <!-- finish flag -->
+          <text x="330" y="106" font-size="12" font-weight="800" fill="#B23A1F" text-anchor="middle">FINISH</text>
+          <rect x="317" y="112" width="5" height="84" fill="#8A5A00"/>
+          <polygon points="322,112 349,122 322,132" fill="#E85D3D"/>
+          <!-- the can, lying on its side -->
+          <g id="s2Can" transform="translate(64,174)">
+            <g id="s2PlusL" opacity="0">
+              <text x="-52" y="-8" font-size="17" font-weight="800" fill="#2F7D3E" text-anchor="middle">+</text>
+              <text x="-52" y="16" font-size="17" font-weight="800" fill="#2F7D3E" text-anchor="middle">+</text>
+            </g>
+            <g id="s2MinusL" opacity="0">
+              <text x="-52" y="-8" font-size="17" font-weight="800" fill="#2F6491" text-anchor="middle">−</text>
+              <text x="-52" y="16" font-size="17" font-weight="800" fill="#2F6491" text-anchor="middle">−</text>
+            </g>
+            <g id="s2PlusR" opacity="0">
+              <text x="52" y="-8" font-size="17" font-weight="800" fill="#2F7D3E" text-anchor="middle">+</text>
+              <text x="52" y="16" font-size="17" font-weight="800" fill="#2F7D3E" text-anchor="middle">+</text>
+            </g>
+            <g id="s2MinusR" opacity="0">
+              <text x="52" y="-8" font-size="17" font-weight="800" fill="#2F6491" text-anchor="middle">−</text>
+              <text x="52" y="16" font-size="17" font-weight="800" fill="#2F6491" text-anchor="middle">−</text>
+            </g>
+            <g id="s2CanSpin">
+              <rect x="-32" y="-22" width="64" height="44" rx="11" fill="#C9CED6" stroke="#8A929A" stroke-width="3"/>
+              <rect x="-32" y="-8" width="64" height="16" fill="#E85D3D"/>
+              <line x1="-18" y1="-22" x2="-18" y2="22" stroke="#8A929A" stroke-width="2" opacity=".45"/>
+              <line x1="8" y1="-22" x2="8" y2="22" stroke="#8A929A" stroke-width="2" opacity=".45"/>
+              <ellipse cx="32" cy="0" rx="7" ry="22" fill="#A8AEB8" stroke="#8A929A" stroke-width="2.5"/>
+              <ellipse cx="32" cy="0" rx="3" ry="11" fill="#8A929A"/>
+              <ellipse cx="-32" cy="0" rx="5" ry="22" fill="#B9BFC9"/>
+            </g>
+          </g>
+          <!-- the charged balloon -->
+          <g id="s2Balloon" transform="translate(150,0)">
+            <ellipse cx="0" cy="116" rx="28" ry="35" fill="#D64545" stroke="#A92E2E" stroke-width="3"/>
+            <path d="M-16,92 a28,35 0 0 1 17,-11" fill="none" stroke="#FFFFFF" stroke-width="3.5" opacity=".7" stroke-linecap="round"/>
+            <polygon points="-5,151 5,151 0,159" fill="#A92E2E"/>
+            <path d="M0,159 q6,12 -2,24 q-6,9 0,15" stroke="#8A6D2F" stroke-width="2.2" fill="none"/>
+            <circle cx="-13" cy="102" r="6" fill="#2F6491"/><text x="-13" y="105.5" font-size="10.5" font-weight="800" fill="#fff" text-anchor="middle">−</text>
+            <circle cx="12" cy="112" r="6" fill="#2F6491"/><text x="12" y="115.5" font-size="10.5" font-weight="800" fill="#fff" text-anchor="middle">−</text>
+            <circle cx="-4" cy="130" r="6" fill="#2F6491"/><text x="-4" y="133.5" font-size="10.5" font-weight="800" fill="#fff" text-anchor="middle">−</text>
+          </g>
+          <rect x="14" y="196" width="332" height="8" rx="4" fill="#D89A6A"/>
+        </svg>
+      </div>
+      <div class="scene-cap" id="s2Cap">Roll the can to the flag! Keep the balloon close — just in front of the can.</div>
+      <div class="ans-row" id="s2Btns">
+        <button class="ans-btn" id="s2Left">◀ Balloon Left</button>
+        <button class="ans-btn" id="s2Right">Balloon Right ▶</button>
+      </div>
+      <div class="next-row" id="s2Next" hidden>
+        <button class="play-btn" id="s2NextBtn" style="margin:0">Next Station ▶</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATION 3: WHAT ELSE CAN STATIC PULL? -->
+  <div id="station3View" class="lab-view" hidden>
+    <div class="lab-card" id="card3">
+      <div class="station-head">Station 3 · What Else Can Static Pull?</div>
+      <div class="scene-cap" id="s3Cap">Tap each thing to test it! Tested: 0 of 4</div>
+      <div class="opts" id="s3Opts" style="grid-template-columns:repeat(2,1fr)">
+        <button class="opt" data-tint="a" id="tPaper">
+          <svg viewBox="0 0 120 76" aria-hidden="true">
+            <rect width="120" height="76" rx="14" fill="#F4FAFB"/>
+            <circle cx="102" cy="14" r="9" fill="#D64545"/>
+            <polygon points="99,23 105,23 102,28" fill="#A92E2E"/>
+            <g class="test-anim" id="animPaper">
+              <rect x="26" y="50" width="13" height="9" rx="1.5" fill="#FFFFFF" stroke="#B9C4C9" transform="rotate(-14 32 54)"/>
+              <rect x="48" y="54" width="13" height="9" rx="1.5" fill="#FFFFFF" stroke="#B9C4C9" transform="rotate(10 54 58)"/>
+              <rect x="68" y="49" width="13" height="9" rx="1.5" fill="#FFFFFF" stroke="#B9C4C9" transform="rotate(-6 74 53)"/>
+              <rect x="38" y="62" width="13" height="9" rx="1.5" fill="#FFFFFF" stroke="#B9C4C9" transform="rotate(18 44 66)"/>
+            </g>
+            <rect x="10" y="69" width="100" height="4" rx="2" fill="#D89A6A"/>
+          </svg>
+          <span>Paper Bits</span>
+        </button>
+        <button class="opt" data-tint="b" id="tTissue">
+          <svg viewBox="0 0 120 76" aria-hidden="true">
+            <rect width="120" height="76" rx="14" fill="#FFFBEF"/>
+            <circle cx="102" cy="14" r="9" fill="#D64545"/>
+            <polygon points="99,23 105,23 102,28" fill="#A92E2E"/>
+            <g class="test-anim" id="animTissue">
+              <path d="M34,66 q6,-22 14,-30 q4,10 8,12 q6,-14 12,-18 q2,12 8,16 q6,4 8,20 q-25,7 -50,0 Z" fill="#FFFFFF" stroke="#C9CFD4" stroke-width="2"/>
+            </g>
+            <rect x="10" y="69" width="100" height="4" rx="2" fill="#D89A6A"/>
+          </svg>
+          <span>Tissue</span>
+        </button>
+        <button class="opt" data-tint="c" id="tHair">
+          <svg viewBox="0 0 120 76" aria-hidden="true">
+            <rect width="120" height="76" rx="14" fill="#F2F9F0"/>
+            <circle cx="102" cy="14" r="9" fill="#D64545"/>
+            <polygon points="99,23 105,23 102,28" fill="#A92E2E"/>
+            <g class="test-anim" id="animHair">
+              <path d="M28,70 q3,-26 -3,-38 M44,70 q1,-28 5,-40 M60,70 q-1,-28 -5,-40 M76,70 q-3,-26 3,-38 M90,70 q-4,-22 -9,-32" stroke="#6B4226" stroke-width="4" fill="none" stroke-linecap="round"/>
+            </g>
+            <rect x="10" y="69" width="100" height="4" rx="2" fill="#D89A6A"/>
+          </svg>
+          <span>Hair</span>
+        </button>
+        <button class="opt" data-tint="d" id="tBook">
+          <svg viewBox="0 0 120 76" aria-hidden="true">
+            <rect width="120" height="76" rx="14" fill="#FDF0F4"/>
+            <circle cx="102" cy="14" r="9" fill="#D64545"/>
+            <polygon points="99,23 105,23 102,28" fill="#A92E2E"/>
+            <g id="animBook">
+              <rect x="30" y="34" width="52" height="34" rx="4" fill="#7A4FA0"/>
+              <rect x="36" y="38" width="40" height="26" rx="2" fill="#FFFDF4"/>
+              <line x1="56" y1="38" x2="56" y2="64" stroke="#C9B98A" stroke-width="2.5"/>
+              <path d="M41,46 h10 M41,53 h10 M61,46 h10 M61,53 h10" stroke="#9AA0A6" stroke-width="2.2"/>
+              <rect x="30" y="30" width="52" height="7" rx="3" fill="#5B3580"/>
+            </g>
+            <rect x="10" y="69" width="100" height="4" rx="2" fill="#D89A6A"/>
+          </svg>
+          <span>Book</span>
+        </button>
+      </div>
+      <div class="next-row" id="s3Next" hidden>
+        <button class="play-btn" id="s3NextBtn" style="margin:0">See My Stars ⭐</button>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="credit">✦ Prepared by: Zulfiqar Ali Sajid ✦</div>
+
+  <div class="overlay" id="endOverlay" hidden>
+    <div class="game-name">🧪 Lab Complete!</div>
+    <h1>Well done,<br>little scientist!</h1>
+    <img class="mascot-dance" src="img/mia-stage.jpg" alt="Mia dancing">
+    <div class="big-score" id="finalStars">You earned 3 ⭐ stars!</div>
+    <div class="moral-pill">⭐ Static electricity can pull light things — without touching them! ⭐</div>
+    <div class="home-panel">
+      <div class="home-title">🏠 Try it at home!</div>
+      <p class="home-text">You need: an empty soda can, a balloon, and your hair. Rub the balloon on your hair, hold it near the can — the can rolls to it like magic!</p>
+      <p class="src-line">Activity idea: Exploratorium Science Snacks · exploratorium.edu/snacks</p>
+    </div>
+    <p>Mia is so proud of you!</p>
+    <button class="big-btn" id="againBtn">↻ Play Again</button>
+    <p><a href="c11.html" style="color:#095A62; font-weight:800;">↩ Back to the Chapter 11 game</a></p>
+    <p><a href="index.html" style="color:#095A62; font-weight:800;">⌂ More chapter games</a></p>
+  </div>
+
+<script>
+
+(function(){
+  "use strict";
+
+  var STAR = '<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M50 6 L63 37 L96 39 L70 60 L79 93 L50 74 L21 93 L30 60 L4 39 L37 37 Z" fill="#FFC93C" stroke="#E8A20C" stroke-width="5" stroke-linejoin="round"/></svg>';
+  var PRAISE = ["Great job! ⭐", "Well done! ⭐", "Super! ⭐", "Yes! That's right! ⭐", "Hooray! ⭐"];
+
+  /* ---------- tiny helpers ---------- */
+  function buzz(){ try{ if(navigator.vibrate){ navigator.vibrate(30); } }catch(e){} }
+
+  /* ---------- audio: WebAudio, created on first tap ---------- */
+  var actx = null, musicGain = null;
+  function audio(){
+    if(!actx){
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if(AC){ try{ actx = new AC(); }catch(e){ actx = null; } }
+      if(actx){
+        try{ musicGain = actx.createGain(); musicGain.gain.value = .9; musicGain.connect(actx.destination); }catch(e){ musicGain = null; }
+      }
+    }
+    if(actx && actx.state === "suspended"){ actx.resume(); }
+    return actx;
+  }
+  function toneAt(freq, t, dur, type, vol, dest){
+    var ac = actx; if(!ac) return;
+    var o = ac.createOscillator(), g = ac.createGain();
+    o.type = type || "sine"; o.frequency.value = freq;
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(vol || 0.16, t + 0.03);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(dest || ac.destination);
+    o.start(t); o.stop(t + dur + 0.05);
+  }
+  function tone(freq, t0, dur, type, vol){
+    var ac = audio(); if(!ac) return;
+    toneAt(freq, ac.currentTime + t0, dur, type, vol, ac.destination);
+  }
+  function chimeRight(){ tone(523.25,0,.22); tone(659.25,.09,.22); tone(783.99,.18,.3); tone(1046.5,.27,.42); }
+  function chimeWrong(){ tone(294,0,.2,"triangle",.08); tone(233,.12,.26,"triangle",.08); }
+  function chimeWin(){ var n=[523.25,659.25,783.99,1046.5,783.99,1046.5,1318.5]; for(var i=0;i<n.length;i++){ tone(n[i], i*.13, .34); } }
+  function popSound(){ tone(500,0,.07,"triangle",.06); tone(760,.05,.09,"triangle",.05); }
+  function zapSound(){ tone(1400,0,.06,"sawtooth",.045); tone(900,.05,.08,"sawtooth",.04); tone(1700,.1,.06,"sawtooth",.035); }
+
+  /* ---------- background music: gentle pentatonic marimba loop, in code ---------- */
+  var MEL_A = [659.25,783.99,880,783.99, 659.25,587.33,659.25,783.99, 880,1046.5,880,783.99, 659.25,783.99,659.25,587.33];
+  var MEL_B = [523.25,659.25,783.99,880, 783.99,659.25,587.33,659.25, 698.46,880,783.99,659.25, 587.33,659.25,0,0];
+  var BASSN = [130.81, 98.00, 110.00, 98.00];
+  var STEP_DUR = 0.24;
+  var musicOn = true, musicPlaying = false, musStep = 0, musNext = 0, musTimer = null;
+  function scheduleStep(s, t){
+    var mel = ((Math.floor(s/16) % 2 === 0) ? MEL_A : MEL_B)[s % 16];
+    var dest = musicGain || actx.destination;
+    if(mel > 0){
+      toneAt(mel, t, .34, "sine", .05, dest);
+      toneAt(mel*2, t, .12, "sine", .012, dest);
+    }
+    if(s % 8 === 0){ toneAt(BASSN[(s >> 3) % 4], t, .55, "triangle", .04, dest); }
+    if(s % 16 === 15){ toneAt(1567.98, t, .3, "sine", .014, dest); }
+  }
+  function musicScheduler(){
+    if(!actx) return;
+    while(musNext < actx.currentTime + 0.20){
+      scheduleStep(musStep, musNext);
+      musNext += STEP_DUR; musStep++;
+    }
+  }
+  function startMusic(){
+    if(!musicOn || musicPlaying) return;
+    var ac = audio(); if(!ac) return;
+    musStep = 0; musNext = ac.currentTime + 0.08;
+    musTimer = setInterval(musicScheduler, 90);
+    musicPlaying = true;
+  }
+  function stopMusic(){
+    if(musTimer){ clearInterval(musTimer); musTimer = null; }
+    musicPlaying = false;
+  }
+
+  /* ---------- voice: Mia speaks (Web Speech API), graceful fallback ---------- */
+  var hasSpeech = ("speechSynthesis" in window);
+  var voiceOn = hasSpeech, voiceCache = null;
+  function pickVoice(){
+    if(!hasSpeech) return null;
+    try{
+      var vs = window.speechSynthesis.getVoices();
+      if(vs && vs.length){ voiceCache = vs; }
+      var list = voiceCache || vs || [], best = null, bestScore = -1, i, v, name, lang, s;
+      for(i=0;i<list.length;i++){
+        v = list[i]; name = v.name || ""; lang = v.lang || "";
+        if(!/^en/i.test(lang)) continue;
+        s = 0;
+        if(/google us english/i.test(name)) s += 60;
+        if(/natural/i.test(name)) s += 45;
+        if(/neural/i.test(name)) s += 45;
+        if(/premium|enhanced/i.test(name)) s += 35;
+        if(/google/i.test(name)) s += 25;
+        if(/aria|jenny|zira|samantha|allison|ava|joanna|salli|emma|amy|bella|ana|michelle|katie|lucy|linda|susan|catherine|karen|sarah|jessica|ashley/i.test(name)) s += 30;
+        if(/female/i.test(name)) s += 25;
+        if(/guy|christopher|eric|roger|brian|james|john|david|mark|kevin|andrew|brandon/i.test(name)) s -= 15;
+        if(/en[-_]US/i.test(lang)) s += 15;
+        else if(/en[-_]GB/i.test(lang)) s += 10;
+        else s += 4;
+        if(v.localService === false) s += 2;
+        if(s > bestScore){ bestScore = s; best = v; }
+      }
+      return best;
+    }catch(e){}
+    return null;
+  }
+  if(hasSpeech){
+    try{ window.speechSynthesis.onvoiceschanged = function(){ pickVoice(); }; pickVoice(); }catch(e){}
+  }
+  /* Speech waits for the child's first tap (browser rule); until then the
+     newest line waits and is spoken on first touch. The bubble always shows
+     the words on screen anyway. */
+  var speechUnlocked = false, pendingSay = null, pendingEmo = "instruct";
+  var EMO_PITCH = {story:1.03, question:1.10, praise:1.20, retry:0.95, instruct:1.05};
+  /* SPEECH QUEUE + GATE (the house standard): lines are spoken one at a time,
+     in order; a new line NEVER cancels the one Mia is speaking. The lab only
+     advances through afterMia(), which waits for the queue to drain. Every
+     utterance has a bounded watchdog so a silent device can never hang the
+     lab; with the voice OFF the gate releases at once. */
+  var sayQ = [], sayBusy = false, sayWdog = null, sayWaiters = [], saySeq = 0;
+  function sayEstimateMs(text){
+    var words = (text || "").split(/\s+/).filter(Boolean).length;
+    return Math.max(4000, Math.min(1800 + words * 620, 25000));
+  }
+  function speechActive(){
+    return !!(voiceOn && hasSpeech && speechUnlocked && (sayBusy || sayQ.length));
+  }
+  function releaseSayWaiters(){
+    if(sayBusy || sayQ.length) return;
+    var ws = sayWaiters; sayWaiters = [];
+    for(var i = 0; i < ws.length; i++){ try{ ws[i](); }catch(e){} }
+  }
+  function whenSpeechDone(cb){
+    if(!speechActive()){ cb(); return; }
+    sayWaiters.push(cb);
+  }
+  function afterMia(cb, minMs){
+    var t0 = Date.now();
+    whenSpeechDone(function(){
+      var wait = (minMs || 0) - (Date.now() - t0);
+      if(wait > 0){ setTimeout(cb, wait); } else { cb(); }
+    });
+  }
+  function pumpSpeech(){
+    if(sayBusy) return;
+    var item = sayQ.shift();
+    if(!item){ releaseSayWaiters(); return; }
+    sayBusy = true;
+    var gen = saySeq, finished = false;
+    function done(){
+      if(finished || gen !== saySeq) return;
+      finished = true;
+      if(sayWdog){ clearTimeout(sayWdog); sayWdog = null; }
+      sayBusy = false;
+      miaTalk(false);
+      pumpSpeech();
+    }
+    var u;
+    try{ u = new SpeechSynthesisUtterance(item.text); }
+    catch(e){ sayBusy = false; pumpSpeech(); return; }
+    u.lang = "en-US"; u.rate = 0.85; u.pitch = EMO_PITCH[item.emo] || 1.05;
+    var v = pickVoice(); if(v){ try{ u.voice = v; }catch(e){} }
+    u.onstart = function(){ if(gen === saySeq){ miaTalk(true, item.emo); } };
+    u.onend = done;
+    u.onerror = done;
+    u.onboundary = function(){ if(gen === saySeq){ miaPulse(); } };
+    sayWdog = setTimeout(done, sayEstimateMs(item.text));
+    try{ window.speechSynthesis.speak(u); }
+    catch(e){ done(); }
+  }
+  function speak(text, emo){
+    if(!voiceOn || !hasSpeech || !text) return;
+    emo = emo || "instruct";
+    if(!speechUnlocked){ pendingSay = text; pendingEmo = emo; return; }
+    var last = sayQ[sayQ.length - 1];
+    if(last && last.text === text && last.emo === emo) return;
+    sayQ.push({text:text, emo:emo});
+    pumpSpeech();
+  }
+  window.addEventListener("pointerdown", function(){
+    if(speechUnlocked) return;
+    speechUnlocked = true;
+    if(pendingSay){ var t = pendingSay, pe = pendingEmo; pendingSay = null; speak(t, pe); }
+  }, true);
+  function stopSpeak(){
+    saySeq++;
+    sayQ.length = 0;
+    if(sayWdog){ clearTimeout(sayWdog); sayWdog = null; }
+    sayBusy = false;
+    miaTalk(false);
+    if(hasSpeech){ try{ window.speechSynthesis.cancel(); }catch(e){} }
+    releaseSayWaiters();
+  }
+
+  /* ---------- toggles (parent controls) ---------- */
+  var musicBtn = document.getElementById("musicBtn"),
+      voiceBtn = document.getElementById("voiceBtn");
+  if(!hasSpeech){ voiceBtn.style.display = "none"; }
+  musicBtn.addEventListener("click", function(){
+    musicOn = !musicOn;
+    musicBtn.classList.toggle("off", !musicOn);
+    musicBtn.setAttribute("aria-pressed", musicOn ? "true" : "false");
+    if(musicOn){ startMusic(); } else { stopMusic(); }
+  });
+  voiceBtn.addEventListener("click", function(){
+    voiceOn = !voiceOn;
+    voiceBtn.classList.toggle("off", !voiceOn);
+    voiceBtn.setAttribute("aria-pressed", voiceOn ? "true" : "false");
+    if(!voiceOn){ stopSpeak(); }
+  });
+
+  /* ---------- drifting petals ---------- */
+  (function petals(){
+    var box = document.getElementById("petals");
+    var colours = ["#CDEFF2","#E6F4F5","#FFE9A8","#BFE6EA"];
+    for(var i=0;i<9;i++){
+      var p = document.createElement("span");
+      p.className = "petal";
+      var w = 9 + Math.random()*8;
+      p.style.width = w + "px"; p.style.height = (w*1.35) + "px";
+      p.style.left = (Math.random()*96) + "vw";
+      p.style.background = colours[i % colours.length];
+      p.style.animationDuration = (11 + Math.random()*9) + "s";
+      p.style.animationDelay = (-Math.random()*16) + "s";
+      box.appendChild(p);
+    }
+  })();
+
+  /* ---------- shared UI pieces ---------- */
+  var speechEl = document.getElementById("speech"),
+      praiseEl = document.getElementById("praise"),
+      scoreBox = document.getElementById("scoreBox"),
+      scoreCountEl = document.getElementById("scoreCount"),
+      mascotEl = document.getElementById("mascot"),
+      mascotWrap = document.getElementById("mascotWrap"),
+      thumbPopEl = document.getElementById("thumbPop"),
+      dockEl = document.getElementById("dock"),
+      titleView = document.getElementById("titleView"),
+      startBtn = document.getElementById("startBtn"),
+      endOverlay = document.getElementById("endOverlay"),
+      finalStarsEl = document.getElementById("finalStars");
+
+  var stars = 0, lastPrompt = "";
+  function updateStars(bumpIt){
+    scoreCountEl.textContent = stars;
+    if(bumpIt){ scoreBox.classList.remove("bump"); void scoreBox.offsetWidth; scoreBox.classList.add("bump"); }
+  }
+  function miaTalk(on, emo){
+    if(!mascotWrap) return;
+    if(emo){ mascotWrap.dataset.emotion = emo; }
+    mascotWrap.classList.toggle("speaking", !!on);
+    if(!on){ mascotWrap.classList.remove("pulse"); }
+  }
+  function miaPulse(){
+    if(!mascotWrap) return;
+    mascotWrap.classList.remove("pulse"); void mascotWrap.offsetWidth; mascotWrap.classList.add("pulse");
+    setTimeout(function(){ mascotWrap.classList.remove("pulse"); }, 280);
+  }
+  function thumbPopNow(){
+    if(!thumbPopEl) return;
+    thumbPopEl.classList.remove("pop"); void thumbPopEl.offsetWidth; thumbPopEl.classList.add("pop");
+  }
+  function pointMia(){
+    if(!mascotWrap) return;
+    mascotWrap.classList.add("pointing");
+    setTimeout(function(){ mascotWrap.classList.remove("pointing"); }, 1400);
+  }
+  function mascotReact(cls){
+    mascotEl.classList.remove("cheer","encourage"); void mascotEl.offsetWidth;
+    if(cls){ mascotEl.classList.add(cls); }
+    if(cls === "cheer"){ thumbPopNow(); }
+  }
+  function say(text, emo){
+    speechEl.textContent = text;
+    lastPrompt = text;
+    if(emo === false) return;
+    speak(text, (typeof emo === "string") ? emo : "instruct");
+  }
+  function praise(text){
+    praiseEl.textContent = text; praiseEl.classList.add("show");
+  }
+  function clearPraise(){
+    praiseEl.textContent = ""; praiseEl.classList.remove("show");
+  }
+  function burstIn(container, leftPct, topPct, n){
+    for(var i=0;i<(n||7);i++){
+      var s = document.createElement("div");
+      s.className = "burst-star"; s.innerHTML = STAR;
+      var size = 18 + Math.random()*18;
+      s.style.width = size+"px"; s.style.height = size+"px";
+      s.style.left = leftPct+"%"; s.style.top = topPct+"%";
+      s.style.setProperty("--dx", (Math.random()*260-130)+"px");
+      s.style.setProperty("--dy", (Math.random()*-160-30)+"px");
+      container.appendChild(s);
+      (function(el){ setTimeout(function(){ el.remove(); }, 900); })(s);
+    }
+  }
+  /* every correct touch is appreciated: spoken praise, a happy Mia, a chime,
+     a star burst — exactly like the chapter games */
+  function celebrate(cardEl){
+    var p = PRAISE[Math.floor(Math.random()*PRAISE.length)];
+    praise(p);
+    mascotReact("cheer");
+    chimeRight(); buzz();
+    speak(p, "praise");
+    if(cardEl){ burstIn(cardEl, 50, 30, 7); }
+  }
+  dockEl.addEventListener("click", function(){
+    if(lastPrompt){ speak(lastPrompt, "instruct"); }
+  });
+  function rainCelebration(){
+    var colours = ["#E85D3D","#FFC93C","#3E9B4F","#4A90C2","#B04FA0"];
+    for(var i=0;i<26;i++){
+      var c = document.createElement("div");
+      if(i % 3 === 0){ c.className = "fall-star"; c.innerHTML = STAR; c.style.width = "30px"; c.style.height = "30px"; }
+      else { c.className = "confetti"; c.style.width = "9px"; c.style.height = "15px"; c.style.background = colours[i % colours.length]; }
+      c.style.left = (Math.random()*96) + "vw";
+      c.style.animationDuration = (2.4 + Math.random()*2.2) + "s";
+      c.style.animationDelay = (Math.random()*0.9) + "s";
+      document.body.appendChild(c);
+      (function(el){ setTimeout(function(){ el.remove(); }, 6000); })(c);
+    }
+  }
+
+  /* ================= THE LAB FLOW ================= */
+  function el(id){ return document.getElementById(id); }
+  var views = [null, el("station1View"), el("station2View"), el("station3View")];
+  var doneFlags = {1:false, 2:false, 3:false};
+  function gateBtn(btn, minMs){
+    btn.classList.add("waiting"); btn.disabled = true;
+    afterMia(function(){ btn.classList.remove("waiting"); btn.disabled = false; }, minMs);
+  }
+  function showStation(n){
+    titleView.hidden = true;
+    for(var i=1;i<=3;i++){
+      views[i].hidden = (i !== n);
+      el("chip"+i).classList.toggle("now", i === n && !doneFlags[i]);
+    }
+    clearPraise();
+    pointMia();
+    say(INTRO_LINE[n], INTRO_EMO[n]);
+    window.scrollTo(0, 0);
+  }
+  function finishStation(n, resultLine, nextRow, nextBtn){
+    doneFlags[n] = true;
+    stars++; updateStars(true);
+    var chip = el("chip"+n);
+    chip.classList.remove("now"); chip.classList.add("done");
+    chip.textContent = "⭐ " + n + " · " + NAMES[n];
+    if(resultLine){ say(resultLine, "story"); }
+    burstIn(el("card"+n), 50, 14, 9);
+    nextRow.hidden = false;
+    gateBtn(nextBtn, 1100);
+  }
+  function showFinish(){
+    for(var i=1;i<=3;i++){ views[i].hidden = true; }
+    finalStarsEl.textContent = "You earned " + stars + " ⭐ stars!";
+    endOverlay.hidden = false;
+    chimeWin(); rainCelebration(); buzz();
+    say(FINISH_LINE, "praise");
+    window.scrollTo(0, 0);
+  }
+  el("s1NextBtn").addEventListener("click", function(){ popSound(); showStation(2); });
+  el("s2NextBtn").addEventListener("click", function(){ popSound(); showStation(3); });
+  el("s3NextBtn").addEventListener("click", function(){ popSound(); showFinish(); });
+  el("againBtn").addEventListener("click", function(){ location.reload(); });
+  startBtn.addEventListener("click", function(){
+    audio(); startMusic();
+    showStation(1);
+  });
+
+  var NAMES = ["", "Charge the Balloon", "Roll the Can", "What Can Static Pull?"];
+  var INTRO_LINE = ["",
+    "Station 1! Charge the Balloon. Rub the balloon on the hair — tap 4 times!",
+    "The balloon pushes the can's electrons away. The near side turns positive — and opposites attract! The can rolls to the balloon.",
+    "Station 3! What Else Can Static Pull? Tap each thing to test it!"];
+  var INTRO_EMO = ["", "question", "story", "question"];
+  var FINISH_LINE = "You did it! You rolled a can with static electricity — without touching it! Now try the real thing at home!";
+
+  /* ---------- STATION 1: charge the balloon ---------- */
+  var rubs = 0, rubbing = false, s1Done = false;
+  el("s1Rub").addEventListener("click", function(){
+    if(rubbing || s1Done) return;
+    audio();
+    rubbing = true;
+    zapSound(); buzz();
+    var g = el("s1Balloon");
+    var t0 = Date.now(), dur = 520;
+    var iv = setInterval(function(){
+      var k = (Date.now() - t0) / dur;
+      if(k >= 1){
+        g.setAttribute("transform", "translate(0,0)");
+        clearInterval(iv); rubbing = false; return;
+      }
+      var dx = Math.sin(k * Math.PI * 2) * 15;
+      g.setAttribute("transform", "translate(" + dx.toFixed(1) + ",0)");
+    }, 30);
+    rubs++;
+    var es = el("s1Electrons").getElementsByClassName("elec");
+    for(var i = 0; i < es.length; i++){
+      es[i].setAttribute("opacity", i < rubs * 2 ? "1" : "0");
+    }
+    el("s1ChargeFill").style.width = (rubs * 25) + "%";
+    if(rubs === 2){
+      el("s1Cap").textContent = "Rub, rub! Electrons are jumping onto the balloon!";
+      say("Electrons are jumping onto the balloon! Rub again!", "instruct");
+    } else if(rubs < 4){
+      el("s1Cap").textContent = "Rub, rub! Charge: " + rubs + " of 4";
+    }
+    if(rubs >= 4){
+      s1Done = true;
+      el("s1Rub").disabled = true;
+      el("s1Cap").textContent = "The balloon is full of static electricity! ⚡";
+      var sp = el("s1Sparkles");
+      sp.setAttribute("opacity", "1");
+      sp.classList.add("sparkle-pop");
+      celebrate(el("card1"));
+      setTimeout(function(){
+        finishStation(1, "Rubbing loads the balloon with tiny electrons. It is full of static electricity!", el("s1Next"), el("s1NextBtn"));
+      }, 950);
+    }
+  });
+
+  /* ---------- STATION 2: roll the can ---------- */
+  /* The can always rolls TOWARD the balloon when the balloon is close.
+     Balloon just ahead (right) -> can rolls right to the flag.
+     Balloon behind (left) -> can rolls back left. Too far -> no pull. */
+  var canX = 64, balloonX = 150, spinDeg = 0;
+  var s2Busy = false, s2Done = false, movesSinceHint = 99;
+  var CAN_MIN = 48, CAN_GOAL = 270, BALLOON_MIN = 40, BALLOON_MAX = 330;
+  var PULL_ZONE = 118, STOP_GAP = 54, PULL_STEP = 30, BALLOON_STEP = 30;
+
+  function setSigns(mode){
+    el("s2PlusL").setAttribute("opacity", mode === "L" ? "1" : "0");
+    el("s2MinusR").setAttribute("opacity", mode === "L" ? "1" : "0");
+    el("s2PlusR").setAttribute("opacity", mode === "R" ? "1" : "0");
+    el("s2MinusL").setAttribute("opacity", mode === "R" ? "1" : "0");
+  }
+  function glideBalloon(toX, done){
+    var g = el("s2Balloon");
+    var fromX = balloonX, t0 = Date.now(), dur = 340;
+    var iv = setInterval(function(){
+      var k = Math.min(1, (Date.now() - t0) / dur);
+      balloonX = fromX + (toX - fromX) * k;
+      g.setAttribute("transform", "translate(" + balloonX.toFixed(1) + ",0)");
+      if(k >= 1){ clearInterval(iv); done(); }
+    }, 30);
+  }
+  function rollCanTo(toX, done){
+    var g = el("s2Can"), spin = el("s2CanSpin");
+    var fromX = canX, t0 = Date.now(), dur = 560;
+    var iv = setInterval(function(){
+      var k = Math.min(1, (Date.now() - t0) / dur);
+      var nx = fromX + (toX - fromX) * k;
+      spinDeg += (nx - canX) * 2.6;
+      canX = nx;
+      g.setAttribute("transform", "translate(" + canX.toFixed(1) + ",174)");
+      spin.setAttribute("transform", "rotate(" + spinDeg.toFixed(1) + ")");
+      if(k >= 1){ clearInterval(iv); done(); }
+    }, 30);
+  }
+  function afterBalloonMove(){
+    var gap = balloonX - canX;
+    var mode = null, target = canX;
+    if(gap > 0 && gap <= PULL_ZONE){ mode = "R"; }
+    else if(gap < 0 && gap >= -PULL_ZONE){ mode = "L"; }
+    if(mode && Math.abs(gap) > STOP_GAP){
+      setSigns(mode);
+      if(mode === "R"){ target = Math.min(canX + Math.min(gap - STOP_GAP, PULL_STEP), 284); }
+      else { target = Math.max(canX - Math.min(-gap - STOP_GAP, PULL_STEP), CAN_MIN); }
+      rollCanTo(target, function(){
+        setTimeout(function(){ setSigns(null); }, 900);
+        s2Busy = false;
+        if(mode === "R"){
+          if(canX >= CAN_GOAL && !s2Done){
+            s2Done = true;
+            el("s2Cap").textContent = "The can reached the flag! 🏁";
+            celebrate(el("card2"));
+            setTimeout(function(){
+              finishStation(2, "You rolled the can all the way to the flag — without touching it! Opposites attract!", el("s2Next"), el("s2NextBtn"));
+            }, 950);
+          } else {
+            el("s2Cap").textContent = "The can rolled to the balloon! Move the balloon and roll it again!";
+          }
+        } else {
+          el("s2Cap").textContent = "The can rolled BACK — toward the balloon! Put the balloon in front of the can.";
+          say("The can rolls toward the balloon! Put the balloon in front of it, near the flag.", "retry");
+          mascotReact("encourage");
+        }
+      });
+    } else {
+      setSigns(null);
+      s2Busy = false;
+      if(Math.abs(gap) > PULL_ZONE){
+        el("s2Cap").textContent = "Too far away! Static cannot pull from far away.";
+        movesSinceHint++;
+        if(movesSinceHint >= 3){
+          movesSinceHint = 0;
+          say("Keep the balloon close — just in front of the can!", "retry");
+          mascotReact("encourage");
+        }
+      } else {
+        el("s2Cap").textContent = "So close! The balloon is nearly touching the can. Nudge it a little!";
+      }
+    }
+  }
+  function moveBalloon(dir){
+    if(s2Busy || s2Done) return;
+    audio(); popSound();
+    s2Busy = true;
+    var toX = balloonX + dir * BALLOON_STEP;
+    if(toX < BALLOON_MIN) toX = BALLOON_MIN;
+    if(toX > BALLOON_MAX) toX = BALLOON_MAX;
+    glideBalloon(toX, afterBalloonMove);
+  }
+  el("s2Left").addEventListener("click", function(){ moveBalloon(-1); });
+  el("s2Right").addEventListener("click", function(){ moveBalloon(1); });
+
+  /* ---------- STATION 3: what else can static pull? ---------- */
+  var tested = {paper:false, tissue:false, hair:false, book:false};
+  var testedCount = 0, s3Done = false;
+  function markTested(key, btn, line, isLight, animId){
+    if(tested[key] || s3Done) return;
+    tested[key] = true; testedCount++;
+    audio(); popSound();
+    btn.classList.add("tested"); btn.disabled = true;
+    if(isLight){
+      el(animId).classList.add("up");
+      chimeRight();
+      praise(PRAISE[Math.floor(Math.random()*PRAISE.length)]);
+      mascotReact("cheer");
+    } else {
+      el(animId).classList.add("stay-shake");
+      tone(220, 0, .25, "triangle", .07);
+      mascotReact("encourage");
+    }
+    say(line, isLight ? "praise" : "story");
+    el("s3Cap").textContent = "Tap each thing to test it! Tested: " + testedCount + " of 4";
+    if(testedCount >= 4){
+      s3Done = true;
+      setTimeout(function(){
+        celebrate(el("card3"));
+        setTimeout(function(){
+          finishStation(3, "You tested everything! Static electricity pulls only very light things.", el("s3Next"), el("s3NextBtn"));
+        }, 900);
+      }, 700);
+    }
+  }
+  el("tPaper").addEventListener("click", function(){
+    markTested("paper", this, "The paper bits jumped up and stuck to the balloon!", true, "animPaper");
+  });
+  el("tTissue").addEventListener("click", function(){
+    markTested("tissue", this, "The tissue is very light. Static pulled it up too!", true, "animTissue");
+  });
+  el("tHair").addEventListener("click", function(){
+    markTested("hair", this, "Look! The hair strands rose up to the balloon!", true, "animHair");
+  });
+  el("tBook").addEventListener("click", function(){
+    markTested("book", this, "Static can only pull very light things!", false, "animBook");
+  });
+
+  say("Hello! I am Mia! Welcome to my Static Roller Lab! Let us make some static sparks!", "story");
+
+})();
+
+</script>
+</body>
+</html>
