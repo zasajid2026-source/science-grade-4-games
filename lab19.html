@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Mia's Water Cycle Lab · Chapter 19 · Science Grade 4</title>
+<link rel="icon" href="data:,">
+<style>
+  :root{
+    --col:#6C4FD8; --deep:#4A32A8; --tint:#EFEBFC;
+    --cream:#FFF7E0; --amber:#E8A020; --magenta:#4A32A8;
+    --bord1:#AE9EEA; --bord2:#D6CEF4;
+    --sky:var(--tint); --ink:#1F2430; --teal:var(--col); --teal-dark:var(--deep);
+    --gold:var(--amber); --green:#3E9B4F; --green-dark:#2F7D3E;
+    --card-shadow:0 10px 24px rgba(74,50,168,.16);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  [hidden]{display:none !important;}
+  html,body{height:100%;}
+  body{
+    font-family:"Comic Neue","Baloo 2","Comic Sans MS","Chalkboard SE","Segoe UI Rounded",ui-rounded,system-ui,sans-serif;
+    background:linear-gradient(180deg,#EFEBFC 0%,#E5DFF8 100%);
+    color:var(--ink); touch-action:manipulation; overflow-x:hidden;
+    display:flex; flex-direction:column; align-items:center; min-height:100dvh;
+  }
+  body::before, body::after{
+    content:""; position:fixed; left:0; right:0; height:14px; z-index:5; pointer-events:none;
+    background-image:
+      radial-gradient(circle at 10px 7px, var(--col) 4.5px, transparent 5px),
+      radial-gradient(circle at 34px 7px, var(--amber) 4.5px, transparent 5px),
+      radial-gradient(circle at 58px 7px, var(--deep) 4.5px, transparent 5px);
+    background-size:72px 14px; background-repeat:repeat-x;
+  }
+  body::before{top:0;} body::after{bottom:0;}
+  .bg-hills,.bg-grass{position:fixed; left:-6%; width:112%; z-index:-2; pointer-events:none;}
+  .bg-hills{bottom:5vh; height:30vh; opacity:.5; animation:drift1 26s ease-in-out infinite alternate;}
+  .bg-grass{bottom:-4px; height:13vh; z-index:-1; opacity:.75; animation:drift2 19s ease-in-out infinite alternate;}
+  @keyframes drift1{from{transform:translateX(-10px)}to{transform:translateX(12px)}}
+  @keyframes drift2{from{transform:translateX(12px)}to{transform:translateX(-12px)}}
+  .petal{position:fixed; top:-4vh; z-index:-1; pointer-events:none; border-radius:62% 38% 62% 38%; opacity:.8; animation:petalfall linear infinite;}
+  @keyframes petalfall{0%{transform:translate(0,-4vh) rotate(0deg);}100%{transform:translate(7vw,108vh) rotate(320deg);}}
+  .topbar{width:100%; max-width:560px; display:flex; align-items:center; justify-content:space-between; padding:16px 14px 4px; gap:8px;}
+  .home-btn{text-decoration:none; background:#fff; color:var(--deep); font-weight:800; font-size:15px; border:3px solid var(--bord1); border-radius:999px; padding:7px 14px; box-shadow:0 3px 0 var(--bord1);}
+  .home-btn:active{transform:translateY(2px); box-shadow:none;}
+  .unit-chip{background:#E6F4F5; color:var(--deep); font-weight:800; font-size:14px; border-radius:999px; padding:8px 12px; text-align:center; line-height:1.15;}
+  .scorebox{display:flex; align-items:center; gap:5px; background:#fff; border:3px solid #FFE1A1; border-radius:999px; padding:6px 13px 6px 9px; font-size:17px; font-weight:800; color:#B97A0B; box-shadow:0 3px 0 #FFE1A1; min-width:104px; justify-content:center;}
+  .scorebox svg{width:24px;height:24px;flex:none;}
+  .scorebox.bump{animation:bump .45s ease;}
+  @keyframes bump{0%{transform:scale(1)}40%{transform:scale(1.18) rotate(-3deg)}100%{transform:scale(1)}}
+  .toggles{width:100%; max-width:560px; display:flex; gap:8px; justify-content:flex-end; padding:6px 14px 0;}
+  .tgl{border:3px solid var(--bord2); background:#fff; border-radius:999px; padding:5px 13px; cursor:pointer; font-family:inherit; font-weight:800; font-size:13.5px; color:var(--ink); box-shadow:0 3px 0 var(--bord2); transition:transform .12s, box-shadow .12s, opacity .2s;}
+  .tgl:active{transform:translateY(2px); box-shadow:none;}
+  .tgl.off{opacity:.5; filter:grayscale(.8);}
+  .partline{margin-top:8px; background:#fff; border:3px solid var(--bord1); color:var(--deep); font-weight:800; font-size:14.5px; border-radius:999px; padding:5px 16px; box-shadow:0 3px 0 var(--bord1);}
+  .dock{position:relative; width:100%; max-width:560px; display:flex; align-items:flex-end; gap:4px; padding:4px 14px 0; cursor:pointer;}
+  .mascot{width:80px; height:80px; flex:none; object-fit:cover; border-radius:50%; border:4px solid var(--gold); background:#fff; transform-origin:50% 100%; pointer-events:none; animation:breathe 3.2s ease-in-out infinite; filter:drop-shadow(0 6px 6px rgba(0,0,0,.18));}
+  @keyframes breathe{0%,100%{transform:translateY(0) scale(1,1)}50%{transform:translateY(-3px) scale(1.015,.99)}}
+  .mascot.cheer{animation:cheer .62s ease 2;}
+  @keyframes cheer{0%{transform:translateY(0)}35%{transform:translateY(-18px) rotate(-3deg) scale(1.05)}70%{transform:translateY(0) rotate(2deg)}100%{transform:translateY(0)}}
+  .mascot.encourage{animation:encourage .7s ease;}
+  @keyframes encourage{0%{transform:rotate(0)}30%{transform:rotate(-5deg) translateY(-2px)}65%{transform:rotate(4deg)}100%{transform:rotate(0)}}
+  .mascot-wrap{position:relative; width:80px; height:80px; flex:none;}
+  .dock .mascot{width:100%; height:100%;}
+  @media (max-height:660px){ .dock .mascot-wrap{width:64px; height:64px;} }
+  .mouth{position:absolute; left:49%; top:66%; width:10%; height:8%; background:#4A2C20; border-radius:50%; opacity:0; pointer-events:none; transform:scaleY(.18); transform-origin:center; transition:opacity .15s;}
+  .mouth::after{content:""; position:absolute; left:20%; right:20%; bottom:6%; height:38%; background:#E88CA0; border-radius:50%;}
+  .mascot-wrap.speaking .mouth{opacity:1; animation:mouthTalk .32s ease-in-out infinite alternate;}
+  @keyframes mouthTalk{from{transform:scaleY(.18)} to{transform:scaleY(1)}}
+  .mascot-wrap[data-emotion="praise"] .mouth{width:13%; left:47.5%;}
+  .mascot-wrap[data-emotion="retry"] .mouth{animation-duration:.52s;}
+  .mascot-wrap[data-emotion="story"] .mouth{animation-duration:.42s;}
+  .mascot-wrap.speaking{filter:drop-shadow(0 0 9px rgba(245,166,35,.55));}
+  .mascot-wrap.pulse .mascot{animation:miapulse .26s ease;}
+  @keyframes miapulse{40%{transform:scale(1.07) translateY(-2px)}}
+  .mascot-wrap.pointing .mascot{animation:pointlean 1s ease-in-out infinite;}
+  @keyframes pointlean{0%,100%{transform:translateX(0) rotate(0)}50%{transform:translateX(4px) rotate(2.5deg)}}
+  .thumb-pop{position:absolute; right:-18px; top:-16px; font-size:34px; z-index:3; opacity:0; pointer-events:none;}
+  .thumb-pop.pop{animation:thumbpop .9s ease;}
+  @keyframes thumbpop{0%{opacity:0; transform:scale(.3) rotate(-14deg)}30%{opacity:1; transform:scale(1.25) rotate(4deg)}70%{opacity:1}100%{opacity:0; transform:scale(1) translateY(-8px)}}
+  .bubble{flex:1; position:relative; margin:0 0 12px 6px; background:#E6F4F5; border:3px solid var(--bord1); color:var(--deep); font-size:clamp(20px,5.8vw,26px); font-weight:800; text-align:center; border-radius:22px; padding:10px 16px; line-height:1.25; box-shadow:0 4px 10px rgba(0,0,0,.10);}
+  .bubble::before{content:""; position:absolute; left:-13px; bottom:14px; width:20px; height:20px; background:#E6F4F5; border-left:3px solid var(--bord1); border-bottom:3px solid var(--bord1); transform:rotate(45deg); border-bottom-left-radius:6px;}
+  .praise{min-height:32px; text-align:center; font-size:clamp(19px,5.4vw,25px); font-weight:800; color:#095A62; padding:2px 10px 0; opacity:0; transform:scale(.8); transition:all .25s;}
+  .praise.show{opacity:1; transform:scale(1);}
+  #titleView{width:100%; display:flex; flex-direction:column; align-items:center;}
+  .story-wrap{width:100%; max-width:560px; display:flex; gap:10px; align-items:flex-start; padding:8px 12px 0;}
+  .story-mia{width:92px; height:92px; flex:none; object-fit:cover; border-radius:50%; border:4px solid var(--gold); background:#FFF7E0; box-shadow:var(--card-shadow); display:block; transform-origin:50% 100%;}
+  .story-card{flex:1; min-width:0; background:#E6F4F5; border:4px solid var(--teal); border-radius:26px; padding:16px 16px 14px; box-shadow:var(--card-shadow); text-align:center;}
+  .own-badge{display:inline-block; background:var(--amber); color:#5C3A00; font-weight:800; font-size:13.5px; letter-spacing:1.2px; border-radius:999px; padding:7px 18px; box-shadow:0 3px 0 #B97A0B; margin-bottom:10px;}
+  .story-title{font-size:clamp(25px,6.8vw,33px); font-weight:800; color:var(--deep); text-align:center; line-height:1.15; margin-bottom:8px;}
+  .story-sub{font-size:clamp(19px,5.4vw,23px); font-weight:800; color:#B97A0B; text-align:center; margin-bottom:8px;}
+  .intro-text{font-size:clamp(17.5px,5vw,21px); font-weight:700; text-align:center; color:#1F2430; line-height:1.35;}
+  .play-btn{margin:14px auto 6px; background:var(--teal); color:#fff; border:none; cursor:pointer; font-family:inherit; font-size:clamp(22px,6vw,27px); font-weight:800; border-radius:999px; padding:16px 38px; min-height:58px; box-shadow:0 7px 0 var(--teal-dark); transition:transform .12s, box-shadow .12s, opacity .2s; animation:playglow 1.6s ease-in-out infinite;}
+  @keyframes playglow{0%,100%{box-shadow:0 7px 0 var(--teal-dark), 0 0 0 0 rgba(246,184,28,0);}50%{box-shadow:0 7px 0 var(--teal-dark), 0 0 0 13px rgba(246,184,28,.38);}}
+  .play-btn:active{transform:translateY(5px); box-shadow:0 2px 0 var(--teal-dark);}
+  .play-btn.listening{animation:none; opacity:.75;}
+  .play-btn.waiting{animation:none; opacity:.55; filter:saturate(.55);}
+  .play-btn.ready{animation:playglow 1.1s ease-in-out infinite; opacity:1;}
+  .play-btn:disabled{cursor:default;}
+  .station-map{width:100%; max-width:560px; display:flex; gap:8px; justify-content:center; flex-wrap:wrap; padding:10px 12px 0;}
+  .st-chip{background:#fff; border:3px solid var(--bord2); color:var(--deep); font-weight:800; font-size:14.5px; border-radius:999px; padding:6px 13px; box-shadow:0 3px 0 var(--bord2);}
+  .st-chip.now{border-color:var(--teal); background:var(--tint);}
+  .st-chip.done{border-color:var(--green); background:#EAF7EE; color:var(--green-dark); box-shadow:0 3px 0 var(--green-dark);}
+  .cycle-map{width:100%; max-width:560px; display:flex; gap:6px; justify-content:center; flex-wrap:wrap; padding:8px 12px 0;}
+  .cyc-chip{background:#fff; border:3px solid #C9D6DC; color:#7A97A5; font-weight:800; font-size:12.5px; letter-spacing:.4px; border-radius:999px; padding:5px 11px; transition:all .4s;}
+  .cyc-chip.lit{border-color:var(--green); background:#EAF7EE; color:var(--green-dark); box-shadow:0 0 14px rgba(62,155,79,.5);}
+  .lab-view{width:100%; display:flex; flex-direction:column; align-items:center;}
+  .lab-card{position:relative; width:calc(100% - 24px); max-width:536px; margin:8px auto 4px; background:#fff; border:4px solid var(--teal); border-radius:24px; padding:16px 12px 18px; box-shadow:var(--card-shadow); text-align:center;}
+  .station-head{font-size:clamp(21px,6vw,26px); font-weight:800; color:var(--deep); line-height:1.2; margin-bottom:4px;}
+  .scene{width:100%; max-width:430px; margin:2px auto 0;}
+  .scene svg{width:100%; height:auto; display:block;}
+  .scene-cap{font-size:16.5px; font-weight:800; color:#A07B4F; margin-top:4px; line-height:1.3; min-height:22px;}
+  .act-row{display:flex; flex-direction:column; align-items:center; margin-top:10px; gap:4px;}
+  .act-btn{background:var(--teal); color:#fff; border:none; cursor:pointer; font-family:inherit; font-size:clamp(20px,5.6vw,24px); font-weight:800; border-radius:999px; padding:15px 34px; min-height:56px; box-shadow:0 7px 0 var(--teal-dark); transition:transform .12s, box-shadow .12s, opacity .2s;}
+  .act-btn:active{transform:translateY(5px); box-shadow:0 2px 0 var(--teal-dark);}
+  .act-btn.waiting{opacity:.55; filter:saturate(.55);}
+  .act-btn:disabled{cursor:default; opacity:.6;}
+  .hold-hint{font-size:15px; font-weight:800; color:#A07B4F; margin-top:6px;}
+  .badge-pop{display:inline-block; margin-top:12px; background:#EAF7EE; border:4px solid var(--green); color:var(--green-dark); font-weight:800; font-size:clamp(20px,5.6vw,25px); border-radius:999px; padding:10px 24px; box-shadow:0 5px 0 var(--green-dark); animation:badgepop .55s ease both;}
+  .badge-pop.no{background:#FDECEA; border-color:#D64545; color:#9B2C2C; box-shadow:0 5px 0 #9B2C2C;}
+  @keyframes badgepop{0%{transform:scale(.3); opacity:0;}60%{transform:scale(1.15);}100%{transform:scale(1); opacity:1;}}
+  .next-row{display:flex; justify-content:center; margin-top:14px;}
+  .burst-star{position:absolute; pointer-events:none; z-index:6; animation:burst .85s ease-out forwards;}
+  @keyframes burst{0%{transform:translate(0,0) scale(.4) rotate(0deg); opacity:1;}100%{transform:translate(var(--dx),var(--dy)) scale(1.15) rotate(160deg); opacity:0;}}
+  .overlay{position:fixed; inset:0; z-index:20; display:flex; flex-direction:column; align-items:center; justify-content:center; background:linear-gradient(180deg,#E6F4F5 0%,#D8ECEE 100%); padding:24px 18px; text-align:center; overflow-y:auto;}
+  .overlay[hidden]{display:none;}
+  .overlay h1{font-size:clamp(27px,7.4vw,38px); font-weight:800; line-height:1.15; color:var(--deep);}
+  .overlay p{font-size:16px; font-weight:700; color:#7A97A5; margin-top:10px; max-width:420px; line-height:1.45;}
+  .overlay .game-name{background:#fff; border:3px solid #FFE1A1; color:#B97A0B; border-radius:999px; font-weight:800; font-size:17px; padding:7px 18px; margin-bottom:14px; box-shadow:0 3px 0 #FFE1A1;}
+  .big-btn{margin-top:20px; background:var(--teal); color:#fff; border:none; cursor:pointer; font-family:inherit; font-size:26px; font-weight:800; border-radius:999px; padding:16px 44px; min-height:58px; box-shadow:0 7px 0 var(--teal-dark); transition:transform .12s, box-shadow .12s;}
+  .big-btn:active{transform:translateY(5px); box-shadow:0 2px 0 var(--teal-dark);}
+  .mascot-dance{width:118px; height:118px; object-fit:cover; border-radius:50%; border:5px solid var(--gold); margin-top:8px; transform-origin:50% 100%; animation:dance .8s ease-in-out infinite; filter:drop-shadow(0 7px 7px rgba(0,0,0,.2));}
+  @keyframes dance{0%,100%{transform:rotate(-4deg) translateY(0)}50%{transform:rotate(4deg) translateY(-11px) scale(1.03)}}
+  .moral-pill{background:var(--teal); color:#fff; border-radius:999px; padding:10px 22px; font-weight:800; font-size:17.5px; margin-top:12px; box-shadow:0 4px 0 var(--teal-dark); line-height:1.25; display:inline-block;}
+  .big-score{font-size:clamp(30px,8.4vw,44px); font-weight:800; color:#B97A0B; margin-top:10px; line-height:1.1;}
+  .fall-star{position:fixed; top:-46px; z-index:30; pointer-events:none; animation:fall linear forwards;}
+  @keyframes fall{to{transform:translateY(108dvh) rotate(320deg);}}
+  .confetti{position:fixed; top:-22px; z-index:30; pointer-events:none; border-radius:2px; animation:confall linear forwards;}
+  @keyframes confall{to{transform:translateY(108dvh) rotate(560deg);}}
+  .credit{font-size:12.5px; font-weight:700; color:#6E97A0; padding:0 10px 16px; text-align:center; margin-top:auto;}
+  .tap-target{cursor:pointer;}
+  .tap-locked{pointer-events:none;}
+  .hint-ring{opacity:0; transform-box:fill-box; transform-origin:center;}
+  .hinting .hint-ring{opacity:.85; animation:ringpulse 1.2s ease-in-out infinite;}
+  @keyframes ringpulse{0%,100%{transform:scale(1);}50%{transform:scale(1.13);}}
+  .steam-wisp{opacity:0;}
+  .steaming .steam-wisp{animation:steamup 1.6s ease-in-out infinite;}
+  .steaming .steam-wisp.w2{animation-delay:.5s;}
+  .steaming .steam-wisp.w3{animation-delay:1s;}
+  @keyframes steamup{0%{transform:translateY(8px) scale(.8); opacity:0}35%{opacity:.8}100%{transform:translateY(-36px) scale(1.25); opacity:0}}
+  .ice-cube{transform-box:fill-box; transform-origin:50% 100%; transition:transform 1.7s ease, opacity 1.7s ease;}
+  .ice-cube.melted{transform:translateY(30px) scale(.22,.10); opacity:.15;}
+  .puddle{transform-box:fill-box; transform-origin:center; transform:scaleX(.12); opacity:0; transition:transform 1.7s ease, opacity 1.2s ease;}
+  .puddle.on{transform:scaleX(1); opacity:.92;}
+  .scene-sun{transform-box:fill-box; transform-origin:center; transition:transform .6s ease;}
+  .scene-sun.hot{animation:sunpulse 1s ease-in-out infinite;}
+  @keyframes sunpulse{0%,100%{transform:scale(1);}50%{transform:scale(1.12);}}
+  .salt-grains{opacity:0;}
+  .salt-grains.falling{animation:graindrop 1.1s ease-in both;}
+  @keyframes graindrop{0%{transform:translateY(0); opacity:1;}75%{transform:translateY(58px); opacity:1;}100%{transform:translateY(66px); opacity:0;}}
+  .salt-water{transform-box:fill-box; transform-origin:50% 100%; transition:transform 2.6s ease;}
+  .salt-water.dried{transform:scaleY(.05);}
+  .crystals{opacity:0; transition:opacity 1s ease;}
+  .crystals.on{opacity:1;}
+  .whole-egg{transform-box:fill-box; transform-origin:center; transition:transform .7s ease, opacity .7s ease;}
+  .whole-egg.gone{transform:translate(74px,-26px) scale(.35) rotate(24deg); opacity:0;}
+  .cooked-egg{opacity:0; transition:opacity .9s ease;}
+  .cooked-egg.on{opacity:1;}
+  .sizzle-b{opacity:0;}
+  .sizzling .sizzle-b{animation:sizzle .5s ease-in-out infinite alternate;}
+  .sizzling .sizzle-b.b2{animation-delay:.16s;} .sizzling .sizzle-b.b3{animation-delay:.3s;}
+  @keyframes sizzle{from{transform:translateY(0); opacity:.95;}to{transform:translateY(-5px); opacity:.35;}}
+  .pan-group{transform-box:fill-box; transform-origin:center;}
+  .pan-group.no-shake{animation:headshake .65s ease;}
+  @keyframes headshake{0%,100%{transform:translateX(0) rotate(0);}20%{transform:translateX(-9px) rotate(-2deg);}45%{transform:translateX(8px) rotate(2deg);}70%{transform:translateX(-5px);}88%{transform:translateX(3px);}}
+  .vapour-wisp{opacity:0;}
+  .vapour-wisp.rising{animation:vapourrise 2.1s ease-out both;}
+  .vapour-wisp.rising.w2{animation-delay:.35s;} .vapour-wisp.rising.w3{animation-delay:.7s;}
+  @keyframes vapourrise{0%{transform:translateY(26px); opacity:0;}30%{opacity:.9;}100%{transform:translateY(-64px); opacity:.85;}}
+  .sparkles{opacity:0; transition:opacity .5s;}
+  .sparkles.on{opacity:1; animation:twinkle .7s ease-in-out infinite alternate;}
+  @keyframes twinkle{from{transform:scale(.92);}to{transform:scale(1.08);}}
+  .cloud-grow{transform-box:fill-box; transform-origin:center; transform:scale(.28); opacity:.5; transition:transform 1.9s ease, opacity 1.4s ease;}
+  .cloud-grow.grown{transform:scale(1); opacity:1;}
+  .fade-wisps{transition:opacity 1.2s ease;}
+  .fade-wisps.gone{opacity:0;}
+  .rain-drops{opacity:0;}
+  .rain-drops.raining{opacity:1; animation:rainfall .55s linear infinite;}
+  @keyframes rainfall{0%{transform:translateY(-7px);}100%{transform:translateY(9px);}}
+  .stream-path{stroke-dasharray:220; stroke-dashoffset:220; opacity:.9; transition:stroke-dashoffset 2s ease .3s;}
+  .stream-path.on{stroke-dashoffset:0;}
+  .cycle-arrow{stroke-dasharray:640; stroke-dashoffset:640; transition:stroke-dashoffset 2.4s ease .4s;}
+  .cycle-arrow.drawn{stroke-dashoffset:0;}
+  .streak{opacity:0; transition:opacity .8s ease;}
+  .streak.on{opacity:.95;}
+  .pond{transition:fill 1.1s ease;}
+  .plant-spot{cursor:pointer;}
+  .planted-grp{transform-box:fill-box; transform-origin:50% 100%; transform:scale(0); opacity:0; transition:transform .55s cubic-bezier(.34,1.56,.64,1), opacity .4s;}
+  .planted-grp.planted{transform:scale(1); opacity:1;}
+  .grass-sway{transform-box:fill-box; transform-origin:50% 100%;}
+  .swaying .grass-sway{animation:swayg .8s ease-in-out;}
+  @keyframes swayg{0%,100%{transform:rotate(0);}30%{transform:rotate(-4deg);}65%{transform:rotate(3deg);}}
+  @media (max-width:400px){ .story-mia{width:76px; height:76px;} }
+  @media (prefers-reduced-motion: reduce){ *{animation-duration:.01s !important; transition-duration:.01s !important;} }
+
+</style>
+</head>
+<body>
+  <svg class="bg-hills" viewBox="0 0 1440 320" preserveAspectRatio="none" aria-hidden="true"><path d="M0,190 C240,110 420,240 720,190 C1020,140 1200,230 1440,170 L1440,320 L0,320 Z" fill="#CFE9EC"/><path d="M0,250 C260,190 520,290 820,250 C1100,215 1280,280 1440,240 L1440,320 L0,320 Z" fill="#AFD8DC" opacity=".7"/></svg>
+  <svg class="bg-grass" viewBox="0 0 1440 120" preserveAspectRatio="none" aria-hidden="true"><path d="M0,70 C200,40 380,95 620,70 C860,45 1100,90 1440,60 L1440,120 L0,120 Z" fill="#AE9EEA"/></svg>
+  <div id="petals" aria-hidden="true"></div>
+  <div class="topbar">
+    <a class="home-btn" href="c19.html">← Ch 19 Game</a>
+    <div class="unit-chip">Chapter 19 · The Water Cycle</div>
+    <div class="scorebox" id="scoreBox" aria-label="Stars you earned">
+      <svg viewBox="0 0 100 100" aria-hidden="true"><path d="M50 6 L63 37 L96 39 L70 60 L79 93 L50 74 L21 93 L30 60 L4 39 L37 37 Z" fill="#FFC93C" stroke="#E8A20C" stroke-width="5" stroke-linejoin="round"/></svg>
+      <span>Stars: <span id="scoreCount">0</span>/3</span>
+    </div>
+  </div>
+  <div class="toggles">
+    <button class="tgl" id="musicBtn" aria-pressed="true">🎵 Music</button>
+    <button class="tgl" id="voiceBtn" aria-pressed="true">🗣️ Voice</button>
+  </div>
+  <div class="partline" id="partLine">Part 4 · Earth and Space</div>
+  <div class="station-map" id="stationMap">
+    <span class="st-chip" id="chip1">☆ 1 · The Sun Heats Up</span>
+    <span class="st-chip" id="chip2">☆ 2 · A Cloud Is Born</span>
+    <span class="st-chip" id="chip3">☆ 3 · Rain Is Falling!</span>
+  </div>
+  <div class="cycle-map" aria-label="Water cycle stages"><span class="cyc-chip" id="cyc1">1 · EVAPORATION</span><span class="cyc-chip" id="cyc2">2 · CONDENSATION</span><span class="cyc-chip" id="cyc3">3 · RAIN</span><span class="cyc-chip" id="cyc4">4 · COLLECTION</span></div>
+  <div class="dock" id="dock" role="button" aria-label="Mia. Tap to hear her again.">
+    <div class="mascot-wrap" id="mascotWrap">
+      <img class="mascot" id="mascot" src="img/mia-face.jpg" alt="Mia, your science friend, smiling at you">
+      <div class="mouth" id="mouth" aria-hidden="true"></div>
+      <div class="thumb-pop" id="thumbPop" aria-hidden="true">👍</div>
+    </div>
+    <div class="bubble" id="speech">Hello! I am Mia!</div>
+  </div>
+  <div class="praise" id="praise" aria-live="polite"></div>
+  <div id="titleView">
+    <div class="story-wrap">
+      <img class="story-mia" id="storyMia" src="img/mia-stage.jpg" alt="Mia waving hello" draggable="false">
+      <div class="story-card">
+        <div class="own-badge">🧪 OUR OWN VIRTUAL LAB</div>
+        <div class="story-title">Mia's Water Cycle Lab</div>
+        <div class="story-sub">⭐ Chapter 19 · The Water Cycle ⭐</div>
+        <p class="intro-text">Make rain with Mia — heat the lake, grow a cloud, and let it pour!</p>
+      </div>
+    </div>
+    <button class="play-btn" id="startBtn">▶ Start the Lab</button>
+  </div>
+
+  <div id="station1View" class="lab-view" hidden>
+    <div class="lab-card" id="card1">
+      <div class="station-head">Station 1 · The Sun Heats Up</div>
+      <div class="scene">
+        <svg viewBox="0 0 360 270" role="img" aria-label="A lake under a big sun">
+          <rect x="0" y="0" width="360" height="270" fill="#EAF6FF"/>
+          <g class="tap-target" id="s1Sun">
+            <circle class="hint-ring" cx="58" cy="54" r="46" fill="none" stroke="#E8A020" stroke-width="4"/>
+            <g stroke="#E8A020" stroke-width="6" stroke-linecap="round">
+              <line x1="58" y1="2" x2="58" y2="16"/><line x1="58" y1="92" x2="58" y2="106"/>
+              <line x1="6" y1="54" x2="20" y2="54"/><line x1="96" y1="54" x2="110" y2="54"/>
+              <line x1="21" y1="17" x2="31" y2="27"/><line x1="85" y1="81" x2="95" y2="91"/>
+              <line x1="95" y1="17" x2="85" y2="27"/><line x1="31" y1="81" x2="21" y2="91"/>
+            </g>
+            <circle cx="58" cy="54" r="31" fill="#FFC93C" stroke="#E8A020" stroke-width="4"/>
+            <circle cx="48" cy="46" r="5" fill="#FFE9A8"/>
+          </g>
+          <path d="M0,206 Q70,168 140,196 T360,188 L360,270 L0,270 Z" fill="#8FD07A"/>
+          <path d="M0,228 Q90,200 190,222 T360,214 L360,270 L0,270 Z" fill="#6FB95E"/>
+          <ellipse cx="180" cy="244" rx="138" ry="19" fill="#5EA8DC"/>
+          <ellipse cx="180" cy="240" rx="120" ry="12" fill="#7CC4E8" opacity=".7"/>
+          <g class="sparkles" id="s1Sparkles" fill="#FFFFFF">
+            <path d="M96,232 l3,7 7,3 -7,3 -3,7 -3,-7 -7,-3 7,-3 Z"/>
+            <path d="M238,238 l2.4,5.6 5.6,2.4 -5.6,2.4 -2.4,5.6 -2.4,-5.6 -5.6,-2.4 5.6,-2.4 Z"/>
+            <path d="M172,230 l2,4.8 4.8,2 -4.8,2 -2,4.8 -2,-4.8 -4.8,-2 4.8,-2 Z"/>
+          </g>
+          <g fill="none" stroke="#8FC7E8" stroke-width="6" stroke-linecap="round">
+            <path class="vapour-wisp" id="s1Wisp1" d="M120,214 q9,-15 0,-30 q-9,-14 0,-28"/>
+            <path class="vapour-wisp w2" id="s1Wisp2" d="M182,210 q9,-15 0,-30 q-9,-14 0,-28"/>
+            <path class="vapour-wisp w3" id="s1Wisp3" d="M244,214 q9,-15 0,-30 q-9,-14 0,-28"/>
+          </g>
+        </svg>
+</div>
+      <div class="scene-cap" id="s1Cap">A lake, hills, and a big quiet Sun.</div>
+
+      <div class="act-row" id="s1SunRow">
+        <button class="act-btn" id="s1SunBtn">☀️ Tap the Sun!</button>
+      </div>
+
+      <div class="next-row" id="s1Next" hidden>
+        <button class="play-btn" id="s1NextBtn" style="margin:0">Next Station ▶</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="station2View" class="lab-view" hidden>
+    <div class="lab-card" id="card2">
+      <div class="station-head">Station 2 · A Cloud Is Born</div>
+      <div class="scene">
+        <svg viewBox="0 0 360 270" role="img" aria-label="Vapour high in the cold sky, over hills and a lake">
+          <rect x="0" y="0" width="360" height="270" fill="#EAF6FF"/>
+          <circle cx="58" cy="54" r="24" fill="#FFC93C" stroke="#E8A020" stroke-width="4"/>
+          <g class="fade-wisps" id="s2WispsTop" fill="none" stroke="#8FC7E8" stroke-width="6" stroke-linecap="round">
+            <path d="M128,120 q9,-14 0,-27 q-9,-13 0,-25"/>
+            <path d="M182,114 q9,-14 0,-27 q-9,-13 0,-25"/>
+            <path d="M236,120 q9,-14 0,-27 q-9,-13 0,-25"/>
+          </g>
+          <text x="322" y="42" font-size="30" text-anchor="middle">❄️</text>
+          <g class="cloud-grow" id="s2Cloud" fill="#FFFFFF" stroke="#C9D6DC" stroke-width="3">
+            <ellipse cx="180" cy="96" rx="86" ry="34"/>
+            <circle cx="128" cy="86" r="30"/><circle cx="180" cy="70" r="38"/><circle cx="232" cy="86" r="30"/>
+          </g>
+          <path d="M0,206 Q70,168 140,196 T360,188 L360,270 L0,270 Z" fill="#8FD07A"/>
+          <path d="M0,228 Q90,200 190,222 T360,214 L360,270 L0,270 Z" fill="#6FB95E"/>
+          <ellipse cx="180" cy="244" rx="138" ry="19" fill="#5EA8DC"/>
+          <ellipse cx="180" cy="240" rx="120" ry="12" fill="#7CC4E8" opacity=".7"/>
+        </svg>
+</div>
+      <div class="scene-cap" id="s2Cap">The wisps have reached the cold top of the sky.</div>
+
+      <div class="act-row" id="s2ColdRow">
+        <button class="act-btn" id="s2Cold">Cold Air ❄️</button>
+      </div>
+
+      <div class="next-row" id="s2Next" hidden>
+        <button class="play-btn" id="s2NextBtn" style="margin:0">Next Station ▶</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="station3View" class="lab-view" hidden>
+    <div class="lab-card" id="card3">
+      <div class="station-head">Station 3 · Rain Is Falling!</div>
+      <div class="scene">
+        <svg viewBox="0 0 360 270" role="img" aria-label="A full cloud raining on hills and a lake">
+          <rect x="0" y="0" width="360" height="270" fill="#EAF6FF"/>
+          <circle cx="322" cy="40" r="19" fill="#FFC93C" stroke="#E8A020" stroke-width="3"/>
+          <path class="cycle-arrow" id="s3Arrow" d="M316,120 A128,104 0 1 0 316,150" fill="none" stroke="#6C4FD8" stroke-width="5" stroke-linecap="round" marker-end="url(#s3Head)"/>
+          <defs><marker id="s3Head" markerWidth="9" markerHeight="9" refX="5" refY="4.5" orient="auto"><path d="M0,0 L9,4.5 L0,9 Z" fill="#6C4FD8"/></marker></defs>
+          <path d="M0,206 Q70,168 140,196 T360,188 L360,270 L0,270 Z" fill="#8FD07A"/>
+          <path d="M0,228 Q90,200 190,222 T360,214 L360,270 L0,270 Z" fill="#6FB95E"/>
+          <g fill="none" stroke="#4A90C2" stroke-width="5" stroke-linecap="round">
+            <path class="stream-path" id="s3Stream1" d="M96,206 q-8,16 6,26 q10,8 4,14"/>
+            <path class="stream-path" id="s3Stream2" d="M258,200 q10,16 -4,28 q-8,8 -2,16"/>
+          </g>
+          <ellipse cx="180" cy="244" rx="138" ry="19" fill="#5EA8DC"/>
+          <ellipse cx="180" cy="240" rx="120" ry="12" fill="#7CC4E8" opacity=".7"/>
+          <g class="rain-drops" id="s3Rain" stroke="#4A90C2" stroke-width="4" stroke-linecap="round">
+            <line x1="104" y1="128" x2="98" y2="146"/><line x1="140" y1="132" x2="134" y2="150"/>
+            <line x1="176" y1="134" x2="170" y2="152"/><line x1="212" y1="132" x2="206" y2="150"/>
+            <line x1="248" y1="128" x2="242" y2="146"/><line x1="122" y1="146" x2="116" y2="164"/>
+            <line x1="194" y1="148" x2="188" y2="166"/><line x1="230" y1="146" x2="224" y2="164"/>
+          </g>
+          <g class="tap-target" id="s3Cloud">
+            <circle class="hint-ring" cx="180" cy="82" r="72" fill="none" stroke="#6C4FD8" stroke-width="4"/>
+            <g fill="#FFFFFF" stroke="#B9C9D2" stroke-width="3">
+              <ellipse cx="180" cy="88" rx="92" ry="36"/>
+              <circle cx="124" cy="78" r="32"/><circle cx="180" cy="60" r="41"/><circle cx="236" cy="78" r="32"/>
+            </g>
+            <ellipse cx="180" cy="100" rx="78" ry="20" fill="#DCE9F2"/>
+          </g>
+        </svg>
+</div>
+      <div class="scene-cap" id="s3Cap">The cloud is big and full of drops.</div>
+
+      <div class="act-row" id="s3RainRow">
+        <button class="act-btn" id="s3RainBtn">🌧️ Tap the Cloud!</button>
+      </div>
+
+      <div class="next-row" id="s3Next" hidden>
+        <button class="play-btn" id="s3NextBtn" style="margin:0">See My Stars ⭐</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="credit">✦ Prepared by: Zulfiqar Ali Sajid ✦</div>
+  <div class="overlay" id="endOverlay" hidden>
+    <div class="game-name">🧪 Lab Complete!</div>
+    <h1>Well done,<br>little scientist!</h1>
+    <img class="mascot-dance" src="img/mia-stage.jpg" alt="Mia dancing">
+    <div class="big-score" id="finalStars">You earned 3 ⭐ stars!</div>
+    <div class="moral-pill">⭐ Water goes up, makes clouds, falls as rain, and collects again! ⭐</div>
+    <p>Mia is so proud of you!</p>
+    <button class="big-btn" id="againBtn">↻ Play Again</button>
+    <p><a href="c19.html" style="color:#095A62; font-weight:800;">↩ Back to the Chapter 19 game</a></p>
+    <p><a href="index.html" style="color:#095A62; font-weight:800;">⌂ More chapter games</a></p>
+  </div>
+<script>
+(function(){
+  "use strict";
+  var STAR = '<svg viewBox="0 0 100 100" aria-hidden="true"><path d="M50 6 L63 37 L96 39 L70 60 L79 93 L50 74 L21 93 L30 60 L4 39 L37 37 Z" fill="#FFC93C" stroke="#E8A20C" stroke-width="5" stroke-linejoin="round"/></svg>';
+  var PRAISE = ["Great job! ⭐", "Well done! ⭐", "Super! ⭐", "Yes! That's right! ⭐", "Hooray! ⭐"];
+  function buzz(){ try{ if(navigator.vibrate){ navigator.vibrate(30); } }catch(e){} }
+  var actx = null, musicGain = null;
+  function audio(){
+    if(!actx){
+      var AC = window.AudioContext || window.webkitAudioContext;
+      if(AC){ try{ actx = new AC(); }catch(e){ actx = null; } }
+      if(actx){ try{ musicGain = actx.createGain(); musicGain.gain.value = .9; musicGain.connect(actx.destination); }catch(e){ musicGain = null; } }
+    }
+    if(actx && actx.state === "suspended"){ actx.resume(); }
+    return actx;
+  }
+  function toneAt(freq, t, dur, type, vol, dest){
+    var ac = actx; if(!ac) return;
+    var o = ac.createOscillator(), g = ac.createGain();
+    o.type = type || "sine"; o.frequency.value = freq;
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.exponentialRampToValueAtTime(vol || 0.16, t + 0.03);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g); g.connect(dest || ac.destination);
+    o.start(t); o.stop(t + dur + 0.05);
+  }
+  function tone(freq, t0, dur, type, vol){ var ac = audio(); if(!ac) return; toneAt(freq, ac.currentTime + t0, dur, type, vol, ac.destination); }
+  function chimeRight(){ tone(523.25,0,.22); tone(659.25,.09,.22); tone(783.99,.18,.3); tone(1046.5,.27,.42); }
+  function chimeWrong(){ tone(294,0,.2,"triangle",.08); tone(233,.12,.26,"triangle",.08); }
+  function chimeWin(){ var n=[523.25,659.25,783.99,1046.5,783.99,1046.5,1318.5]; for(var i=0;i<n.length;i++){ tone(n[i], i*.13, .34); } }
+  function popSound(){ tone(500,0,.07,"triangle",.06); tone(760,.05,.09,"triangle",.05); }
+  var MEL_A = [659.25,783.99,880,783.99, 659.25,587.33,659.25,783.99, 880,1046.5,880,783.99, 659.25,783.99,659.25,587.33];
+  var MEL_B = [523.25,659.25,783.99,880, 783.99,659.25,587.33,659.25, 698.46,880,783.99,659.25, 587.33,659.25,0,0];
+  var BASSN = [130.81, 98.00, 110.00, 98.00];
+  var STEP_DUR = 0.24;
+  var musicOn = true, musicPlaying = false, musStep = 0, musNext = 0, musTimer = null;
+  function scheduleStep(s, t){
+    var mel = ((Math.floor(s/16) % 2 === 0) ? MEL_A : MEL_B)[s % 16];
+    var dest = musicGain || actx.destination;
+    if(mel > 0){ toneAt(mel, t, .34, "sine", .05, dest); toneAt(mel*2, t, .12, "sine", .012, dest); }
+    if(s % 8 === 0){ toneAt(BASSN[(s >> 3) % 4], t, .55, "triangle", .04, dest); }
+    if(s % 16 === 15){ toneAt(1567.98, t, .3, "sine", .014, dest); }
+  }
+  function musicScheduler(){ if(!actx) return; while(musNext < actx.currentTime + 0.20){ scheduleStep(musStep, musNext); musNext += STEP_DUR; musStep++; } }
+  function startMusic(){ if(!musicOn || musicPlaying) return; var ac = audio(); if(!ac) return; musStep = 0; musNext = ac.currentTime + 0.08; musTimer = setInterval(musicScheduler, 90); musicPlaying = true; }
+  function stopMusic(){ if(musTimer){ clearInterval(musTimer); musTimer = null; } musicPlaying = false; }
+  var hasSpeech = ("speechSynthesis" in window);
+  var voiceOn = hasSpeech, voiceCache = null;
+  function pickVoice(){
+    if(!hasSpeech) return null;
+    try{
+      var vs = window.speechSynthesis.getVoices();
+      if(vs && vs.length){ voiceCache = vs; }
+      var list = voiceCache || vs || [], best = null, bestScore = -1, i, v, name, lang, s;
+      for(i=0;i<list.length;i++){
+        v = list[i]; name = v.name || ""; lang = v.lang || "";
+        if(!/^en/i.test(lang)) continue;
+        s = 0;
+        if(/google us english/i.test(name)) s += 60;
+        if(/natural/i.test(name)) s += 45;
+        if(/neural/i.test(name)) s += 45;
+        if(/premium|enhanced/i.test(name)) s += 35;
+        if(/google/i.test(name)) s += 25;
+        if(/aria|jenny|zira|samantha|allison|ava|joanna|salli|emma|amy|bella|ana|michelle|katie|lucy|linda|susan|catherine|karen|sarah|jessica|ashley/i.test(name)) s += 30;
+        if(/female/i.test(name)) s += 25;
+        if(/guy|christopher|eric|roger|brian|james|john|david|mark|kevin|andrew|brandon/i.test(name)) s -= 15;
+        if(/en[-_]US/i.test(lang)) s += 15;
+        else if(/en[-_]GB/i.test(lang)) s += 10;
+        else s += 4;
+        if(v.localService === false) s += 2;
+        if(s > bestScore){ bestScore = s; best = v; }
+      }
+      return best;
+    }catch(e){}
+    return null;
+  }
+  if(hasSpeech){ try{ window.speechSynthesis.onvoiceschanged = function(){ pickVoice(); }; pickVoice(); }catch(e){} }
+  var speechUnlocked = false, pendingSay = null, pendingEmo = "instruct";
+  var EMO_PITCH = {story:1.03, question:1.10, praise:1.20, retry:0.95, instruct:1.05};
+  var sayQ = [], sayBusy = false, sayWdog = null, sayWaiters = [], saySeq = 0;
+  function sayEstimateMs(text){
+    var words = (text || "").split(/\s+/).filter(Boolean).length;
+    return Math.max(4000, Math.min(1800 + words * 620, 25000));
+  }
+  function speechActive(){ return !!(voiceOn && hasSpeech && speechUnlocked && (sayBusy || sayQ.length)); }
+  function releaseSayWaiters(){
+    if(sayBusy || sayQ.length) return;
+    var ws = sayWaiters; sayWaiters = [];
+    for(var i = 0; i < ws.length; i++){ try{ ws[i](); }catch(e){} }
+  }
+  function whenSpeechDone(cb){ if(!speechActive()){ cb(); return; } sayWaiters.push(cb); }
+  function afterMia(cb, minMs){
+    var t0 = Date.now();
+    whenSpeechDone(function(){
+      var wait = (minMs || 0) - (Date.now() - t0);
+      if(wait > 0){ setTimeout(cb, wait); } else { cb(); }
+    });
+  }
+  function pumpSpeech(){
+    if(sayBusy) return;
+    var item = sayQ.shift();
+    if(!item){ releaseSayWaiters(); return; }
+    sayBusy = true;
+    var gen = saySeq, finished = false;
+    function done(){
+      if(finished || gen !== saySeq) return;
+      finished = true;
+      if(sayWdog){ clearTimeout(sayWdog); sayWdog = null; }
+      sayBusy = false;
+      miaTalk(false);
+      pumpSpeech();
+    }
+    var u;
+    try{ u = new SpeechSynthesisUtterance(item.text); }
+    catch(e){ sayBusy = false; pumpSpeech(); return; }
+    u.lang = "en-US"; u.rate = 0.85; u.pitch = EMO_PITCH[item.emo] || 1.05;
+    var v = pickVoice(); if(v){ try{ u.voice = v; }catch(e){} }
+    u.onstart = function(){ if(gen === saySeq){ miaTalk(true, item.emo); } };
+    u.onend = done;
+    u.onerror = done;
+    u.onboundary = function(){ if(gen === saySeq){ miaPulse(); } };
+    sayWdog = setTimeout(done, sayEstimateMs(item.text));
+    try{ window.speechSynthesis.speak(u); }
+    catch(e){ done(); }
+  }
+  function speak(text, emo){
+    if(!voiceOn || !hasSpeech || !text) return;
+    emo = emo || "instruct";
+    if(!speechUnlocked){ pendingSay = text; pendingEmo = emo; return; }
+    var last = sayQ[sayQ.length - 1];
+    if(last && last.text === text && last.emo === emo) return;
+    sayQ.push({text:text, emo:emo});
+    pumpSpeech();
+  }
+  window.addEventListener("pointerdown", function(){
+    if(speechUnlocked) return;
+    speechUnlocked = true;
+    if(pendingSay){ var t = pendingSay, pe = pendingEmo; pendingSay = null; speak(t, pe); }
+  }, true);
+  function stopSpeak(){
+    saySeq++;
+    sayQ.length = 0;
+    if(sayWdog){ clearTimeout(sayWdog); sayWdog = null; }
+    sayBusy = false;
+    miaTalk(false);
+    if(hasSpeech){ try{ window.speechSynthesis.cancel(); }catch(e){} }
+    releaseSayWaiters();
+  }
+  var musicBtn = document.getElementById("musicBtn"), voiceBtn = document.getElementById("voiceBtn");
+  if(!hasSpeech){ voiceBtn.style.display = "none"; }
+  musicBtn.addEventListener("click", function(){
+    musicOn = !musicOn;
+    musicBtn.classList.toggle("off", !musicOn);
+    musicBtn.setAttribute("aria-pressed", musicOn ? "true" : "false");
+    if(musicOn){ startMusic(); } else { stopMusic(); }
+  });
+  voiceBtn.addEventListener("click", function(){
+    voiceOn = !voiceOn;
+    voiceBtn.classList.toggle("off", !voiceOn);
+    voiceBtn.setAttribute("aria-pressed", voiceOn ? "true" : "false");
+    if(!voiceOn){ stopSpeak(); }
+  });
+  (function petals(){
+    var box = document.getElementById("petals");
+    var colours = ["#CDEFF2","#E6F4F5","#FFE9A8","#BFE6EA"];
+    for(var i=0;i<9;i++){
+      var p = document.createElement("span");
+      p.className = "petal";
+      var w = 9 + Math.random()*8;
+      p.style.width = w + "px"; p.style.height = (w*1.35) + "px";
+      p.style.left = (Math.random()*96) + "vw";
+      p.style.background = colours[i % colours.length];
+      p.style.animationDuration = (11 + Math.random()*9) + "s";
+      p.style.animationDelay = (-Math.random()*16) + "s";
+      box.appendChild(p);
+    }
+  })();
+  var speechEl = document.getElementById("speech"),
+      praiseEl = document.getElementById("praise"),
+      scoreBox = document.getElementById("scoreBox"),
+      scoreCountEl = document.getElementById("scoreCount"),
+      mascotEl = document.getElementById("mascot"),
+      mascotWrap = document.getElementById("mascotWrap"),
+      thumbPopEl = document.getElementById("thumbPop"),
+      dockEl = document.getElementById("dock"),
+      titleView = document.getElementById("titleView"),
+      startBtn = document.getElementById("startBtn"),
+      endOverlay = document.getElementById("endOverlay"),
+      finalStarsEl = document.getElementById("finalStars");
+  var stars = 0, lastPrompt = "";
+  function updateStars(bumpIt){
+    scoreCountEl.textContent = stars;
+    if(bumpIt){ scoreBox.classList.remove("bump"); void scoreBox.offsetWidth; scoreBox.classList.add("bump"); }
+  }
+  function miaTalk(on, emo){
+    if(!mascotWrap) return;
+    if(emo){ mascotWrap.dataset.emotion = emo; }
+    mascotWrap.classList.toggle("speaking", !!on);
+    if(!on){ mascotWrap.classList.remove("pulse"); }
+  }
+  function miaPulse(){
+    if(!mascotWrap) return;
+    mascotWrap.classList.remove("pulse"); void mascotWrap.offsetWidth; mascotWrap.classList.add("pulse");
+    setTimeout(function(){ mascotWrap.classList.remove("pulse"); }, 280);
+  }
+  function thumbPopNow(){ if(!thumbPopEl) return; thumbPopEl.classList.remove("pop"); void thumbPopEl.offsetWidth; thumbPopEl.classList.add("pop"); }
+  function pointMia(){
+    if(!mascotWrap) return;
+    mascotWrap.classList.add("pointing");
+    setTimeout(function(){ mascotWrap.classList.remove("pointing"); }, 1400);
+  }
+  function mascotReact(cls){
+    mascotEl.classList.remove("cheer","encourage"); void mascotEl.offsetWidth;
+    if(cls){ mascotEl.classList.add(cls); }
+    if(cls === "cheer"){ thumbPopNow(); }
+  }
+  function say(text, emo){
+    speechEl.textContent = text;
+    lastPrompt = text;
+    if(emo === false) return;
+    speak(text, (typeof emo === "string") ? emo : "instruct");
+  }
+  function praise(text){ praiseEl.textContent = text; praiseEl.classList.add("show"); }
+  function clearPraise(){ praiseEl.textContent = ""; praiseEl.classList.remove("show"); }
+  function burstIn(container, leftPct, topPct, n){
+    for(var i=0;i<(n||7);i++){
+      var s = document.createElement("div");
+      s.className = "burst-star"; s.innerHTML = STAR;
+      var size = 18 + Math.random()*18;
+      s.style.width = size+"px"; s.style.height = size+"px";
+      s.style.left = leftPct+"%"; s.style.top = topPct+"%";
+      s.style.setProperty("--dx", (Math.random()*260-130)+"px");
+      s.style.setProperty("--dy", (Math.random()*-160-30)+"px");
+      container.appendChild(s);
+      (function(el){ setTimeout(function(){ el.remove(); }, 900); })(s);
+    }
+  }
+  function celebrate(cardEl){
+    var p = PRAISE[Math.floor(Math.random()*PRAISE.length)];
+    praise(p);
+    mascotReact("cheer");
+    chimeRight(); buzz();
+    speak(p, "praise");
+    if(cardEl){ burstIn(cardEl, 50, 30, 7); }
+  }
+  function onWrong(btn, retryLine){
+    btn.classList.remove("wrong"); void btn.offsetWidth; btn.classList.add("wrong");
+    mascotReact("encourage");
+    chimeWrong();
+    say(retryLine, "retry");
+  }
+  dockEl.addEventListener("click", function(){ if(lastPrompt){ speak(lastPrompt, "instruct"); } });
+  function rainCelebration(){
+    var colours = ["#E85D3D","#FFC93C","#3E9B4F","#4A90C2","#B04FA0"];
+    for(var i=0;i<26;i++){
+      var c = document.createElement("div");
+      if(i % 3 === 0){ c.className = "fall-star"; c.innerHTML = STAR; c.style.width = "30px"; c.style.height = "30px"; }
+      else { c.className = "confetti"; c.style.width = "9px"; c.style.height = "15px"; c.style.background = colours[i % colours.length]; }
+      c.style.left = (Math.random()*96) + "vw";
+      c.style.animationDuration = (2.4 + Math.random()*2.2) + "s";
+      c.style.animationDelay = (Math.random()*0.9) + "s";
+      document.body.appendChild(c);
+      (function(el){ setTimeout(function(){ el.remove(); }, 6000); })(c);
+    }
+  }
+  function el(id){ return document.getElementById(id); }
+  var views = [null, el("station1View"), el("station2View"), el("station3View")];
+  var doneFlags = {1:false, 2:false, 3:false};
+  function gateBtn(btn, minMs){
+    btn.classList.add("waiting"); btn.disabled = true;
+    afterMia(function(){ btn.classList.remove("waiting"); btn.disabled = false; }, minMs);
+  }
+  function gateTap(elm, minMs){
+    elm.classList.add("tap-locked");
+    afterMia(function(){ elm.classList.remove("tap-locked"); }, minMs);
+  }
+  function showStation(n){
+    titleView.hidden = true;
+    for(var i=1;i<=3;i++){
+      views[i].hidden = (i !== n);
+      el("chip"+i).classList.toggle("now", i === n && !doneFlags[i]);
+    }
+    clearPraise();
+    pointMia();
+    say(LINE["s"+n+"Intro"], "question");
+    gateStation(n);
+    window.scrollTo(0, 0);
+  }
+  function finishStation(n, resultLine, nextRow, nextBtn){
+    doneFlags[n] = true;
+    stars++; updateStars(true);
+    var chip = el("chip"+n);
+    chip.classList.remove("now"); chip.classList.add("done");
+    chip.textContent = "⭐ " + n + " · " + NAMES[n];
+    say(resultLine, "story");
+    burstIn(el("card"+n), 50, 14, 9);
+    nextRow.hidden = false;
+    gateBtn(nextBtn, 1100);
+  }
+  el("s1NextBtn").addEventListener("click", function(){ popSound(); showStation(2); });
+  el("s2NextBtn").addEventListener("click", function(){ popSound(); showStation(3); });
+  el("s3NextBtn").addEventListener("click", function(){
+    popSound();
+    for(var i=1;i<=3;i++){ views[i].hidden = true; }
+    finalStarsEl.textContent = "You earned " + stars + " ⭐ stars!";
+    endOverlay.hidden = false;
+    chimeWin(); rainCelebration(); buzz();
+    say(LINE.finish, "praise");
+    window.scrollTo(0, 0);
+  });
+  el("againBtn").addEventListener("click", function(){ location.reload(); });
+  startBtn.addEventListener("click", function(){ audio(); startMusic(); showStation(1); });
+
+  var NAMES = ["", "The Sun Heats Up", "A Cloud Is Born", "Rain Is Falling!"];
+  var LINE = {
+    hello: "Hello! I am Mia! Welcome to my Water Cycle Lab! We will make rain together!",
+    s1Intro: "Station 1! Tap the big Sun to heat the lake!",
+    s1Result: "The Sun heats the water. It rises as vapour — evaporation!",
+    s2Intro: "Station 2! The vapour is high and cold. Tap Cold Air!",
+    s2Result: "The vapour cools and joins into drops — a cloud is born!",
+    s3Intro: "Station 3! The cloud is big and full. Tap the cloud!",
+    s3Result: "Rain falls, water collects — and the cycle starts again!",
+    finish: "You did it! You made the whole water cycle!"
+  };
+  function gateStation(n){
+    if(n===1){
+      el("s1Sun").classList.add("hinting");
+      gateBtn(el("s1SunBtn"), 600);
+      gateTap(el("s1Sun"), 600);
+    }
+    if(n===2){ gateBtn(el("s2Cold"), 600); }
+    if(n===3){
+      el("s3Cloud").classList.add("hinting");
+      gateBtn(el("s3RainBtn"), 600);
+      gateTap(el("s3Cloud"), 600);
+    }
+  }
+  /* Station 1: tap the sun — evaporation */
+  var s1Done = false;
+  function doSun(){
+    if(s1Done) return; s1Done = true;
+    el("s1Sun").classList.remove("hinting");
+    el("s1SunBtn").disabled = true; el("s1SunBtn").classList.add("waiting");
+    el("s1Cap").textContent = "The Sun is hot! The lake is sparkling!";
+    popSound();
+    var sun = el("s1Sun");
+    sun.classList.add("scene-sun"); sun.classList.add("hot");
+    el("s1Sparkles").classList.add("on");
+    el("s1Wisp1").classList.add("rising");
+    el("s1Wisp2").classList.add("rising");
+    el("s1Wisp3").classList.add("rising");
+    setTimeout(function(){
+      el("s1Cap").textContent = "Blue vapour is rising from the water!";
+      el("cyc1").classList.add("lit");
+      el("s1SunRow").hidden = true;
+      celebrate(el("card1"));
+      finishStation(1, LINE.s1Result, el("s1Next"), el("s1NextBtn"));
+    }, 2300);
+  }
+  el("s1Sun").addEventListener("click", doSun);
+  el("s1SunBtn").addEventListener("click", doSun);
+  /* Station 2: cold air — condensation */
+  var s2Done = false;
+  el("s2Cold").addEventListener("click", function(){
+    if(s2Done) return; s2Done = true;
+    var btn = el("s2Cold"); btn.disabled = true; btn.classList.add("waiting");
+    el("s2Cap").textContent = "Brrr! Cold air! The wisps are joining together!";
+    popSound();
+    el("s2WispsTop").classList.add("gone");
+    el("s2Cloud").classList.add("grown");
+    setTimeout(function(){
+      el("s2Cap").textContent = "A big white cloud is born!";
+      el("cyc2").classList.add("lit");
+      el("s2ColdRow").hidden = true;
+      celebrate(el("card2"));
+      finishStation(2, LINE.s2Result, el("s2Next"), el("s2NextBtn"));
+    }, 2100);
+  });
+  /* Station 3: tap the cloud — rain + collection */
+  var s3Done = false;
+  function doRain(){
+    if(s3Done) return; s3Done = true;
+    el("s3Cloud").classList.remove("hinting");
+    el("s3RainBtn").disabled = true; el("s3RainBtn").classList.add("waiting");
+    el("s3Cap").textContent = "Rain is falling on the hills!";
+    popSound(); buzz();
+    el("s3Rain").classList.add("raining");
+    el("s3Stream1").classList.add("on");
+    el("s3Stream2").classList.add("on");
+    el("s3Arrow").classList.add("drawn");
+    setTimeout(function(){ el("cyc3").classList.add("lit"); }, 800);
+    setTimeout(function(){
+      el("cyc4").classList.add("lit");
+      el("s3Cap").textContent = "Streams run down into the lake!";
+    }, 2000);
+    setTimeout(function(){
+      el("s3Rain").classList.remove("raining");
+      el("s3RainRow").hidden = true;
+      celebrate(el("card3"));
+      finishStation(3, LINE.s3Result, el("s3Next"), el("s3NextBtn"));
+    }, 2900);
+  }
+  el("s3Cloud").addEventListener("click", doRain);
+  el("s3RainBtn").addEventListener("click", doRain);
+
+  say(LINE.hello, "story");
+})();
+
+</script>
+</body>
+</html>
